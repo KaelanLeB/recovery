@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Check-In — Recovery App</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #F4F7F8;
+      --card:       #FFFFFF;
+      --primary:    #3D6B6B;
+      --primary-dk: #2C5050;
+      --accent:     #E8A87C;
+      --accent-lt:  #FDF0E6;
+      --muted:      #8A9BA8;
+      --text:       #2D3A3A;
+      --text-lt:    #5C6E6E;
+      --danger-lt:  #FFF0F0;
+      --danger:     #C0605A;
+      --radius:     16px;
+      --shadow:     0 6px 24px rgba(30, 54, 54, 0.12);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top, #F9FCFC, var(--bg));
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0;
+    }
+
+    /* ── Shell ─────────────────────────────────────────── */
+    .shell {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: 0 0 92px;
+    }
+
+    /* ── Top bar ────────────────────────────────────────── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px 8px;
+    }
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      padding: 4px 24px 0;
+    }
+    .top-link {
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .top-link-streak {
+      background: #EEF5F5;
+      color: var(--primary);
+      border: 1px solid #D6E6E6;
+    }
+    .topbar-streak {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      background: #E4F0F0;
+      border-radius: 20px;
+      padding: 5px 12px;
+      letter-spacing: 0.01em;
+    }
+    .topbar-date {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .streak-tester {
+      margin: 6px 24px 0;
+      background: #ffffffd9;
+      border: 1px solid #E4ECEC;
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .streak-tester label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .streak-tester select {
+      width: 100%;
+      border: 1.5px solid #D8E4E4;
+      border-radius: 10px;
+      background: #fff;
+      font-size: 14px;
+      color: var(--text);
+      font-family: inherit;
+      padding: 10px 12px;
+    }
+    .streak-tone-note {
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text-lt);
+      margin-top: 8px;
+    }
+    .sos-link-wrap {
+      padding: 8px 24px 0;
+    }
+    .sos-link {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: #C0605A;
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.01em;
+      padding: 12px 14px;
+    }
+    .sos-link:hover { background: #AF554F; }
+    .sos-link:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 2px;
+    }
+    .top-link:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* ── Progress dots ──────────────────────────────────── */
+    .progress {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      padding: 20px 0 4px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #D4E2E2;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .dot.active  { background: var(--primary); transform: scale(1.25); }
+    .dot.done    { background: var(--accent); }
+
+    /* ── Card ───────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin: 16px 20px 0;
+      padding: 32px 28px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Step visibility ────────────────────────────────── */
+    .step { display: none; flex-direction: column; flex: 1; }
+    .step.active { display: flex; animation: fadeUp 0.35s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Typography ─────────────────────────────────────── */
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .sub {
+      font-size: 15px;
+      color: var(--text-lt);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    /* ── Mood grid ──────────────────────────────────────── */
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .mood-btn {
+      background: none;
+      border: 2px solid #E8EEEE;
+      border-radius: 12px;
+      padding: 10px 4px 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mood-btn:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 2px;
+    }
+    .mood-btn .emoji { font-size: 26px; line-height: 1; }
+    .mood-btn .label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
+    .mood-btn.selected {
+      border-color: var(--primary);
+      background: #EEF5F5;
+      transform: scale(1.06);
+    }
+    .mood-btn.selected .label { color: var(--primary); }
+
+    /* ── Sober buttons ──────────────────────────────────── */
+    .sober-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .btn-sober {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: none;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: 0.01em;
+    }
+    .btn-sober:active { transform: scale(0.97); }
+    .btn-sober:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    .btn-yes {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-yes:hover { background: var(--primary-dk); }
+    .btn-slip {
+      background: var(--danger-lt);
+      color: var(--danger);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px;
+    }
+    .btn-slip:hover { background: #FCDEDE; }
+
+    /* ── Textarea ───────────────────────────────────────── */
+    .journal-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-lt);
+      margin-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      border: 2px solid #E8EEEE;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      resize: none;
+      line-height: 1.6;
+      transition: border-color 0.2s;
+      background: #FAFBFB;
+      margin-bottom: 8px;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+    }
+    textarea::placeholder { color: #B0C0C0; }
+    .char-count {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+      margin-bottom: 24px;
+    }
+
+    /* ── Compassion box (slip) ──────────────────────────── */
+    .compassion-box {
+      background: var(--accent-lt);
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text);
+    }
+
+    /* ── Primary CTA ────────────────────────────────────── */
+    .btn-primary {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: none;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+      transition: background 0.2s, transform 0.15s, opacity 0.2s;
+      letter-spacing: 0.01em;
+      -webkit-tap-highlight-color: transparent;
+      margin-top: auto;
+    }
+    .btn-primary:hover  { background: var(--primary-dk); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-skip {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 14px;
+      text-align: center;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .btn-skip:focus-visible { outline: 2px solid var(--primary); border-radius: 4px; }
+
+    /* ── Complete screen ────────────────────────────────── */
+    .complete-icon {
+      font-size: 56px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .milestone-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-lt);
+      border: 1.5px solid var(--accent);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #B06820;
+      margin-bottom: 24px;
+    }
+    .complete-streak {
+      font-size: 52px;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .complete-streak-label {
+      font-size: 15px;
+      color: var(--text-lt);
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .summary-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid #EEF2F2;
+      font-size: 14px;
+      color: var(--text-lt);
+    }
+    .summary-row .summary-emoji { font-size: 20px; }
+    .summary-row strong { color: var(--text); }
+
+    .slip-complete-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
+    .slip-heading { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+    .slip-message { font-size: 15px; color: var(--text-lt); line-height: 1.65; margin-bottom: 28px; }
+
+    /* ── Spacer ─────────────────────────────────────────── */
+    .spacer { flex: 1; }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: 100%;
+      max-width: 430px;
+      background: #FFFFFFF0;
+      backdrop-filter: blur(8px);
+      border-top: 1px solid #DFEAEA;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      gap: 8px;
+    }
+    .tab {
+      text-decoration: none;
+      color: var(--text-lt);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 10px;
+      padding: 10px 6px;
+      border: 1px solid transparent;
+    }
+    .tab.active {
+      color: var(--primary);
+      background: #EEF5F5;
+      border-color: #D6E6E6;
+    }
+    .tab:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <span class="topbar-streak" id="topbar-streak">🌿 Day 47</span>
+    <span class="topbar-date" id="today-date"></span>
+  </div>
+  <div class="top-actions">
+    <a class="top-link top-link-streak" href="streak.html">View streak</a>
+  </div>
+  <div class="streak-tester">
+    <label for="streak-select">Prototype streak state</label>
+    <select id="streak-select" aria-label="Select streak day for prototype">
+      <option value="1">Day 1</option>
+      <option value="7">Day 7</option>
+      <option value="30">Day 30</option>
+      <option value="47" selected>Day 47</option>
+      <option value="365">Day 365</option>
+    </select>
+    <p class="streak-tone-note" id="streak-tone-note">
+      Steady momentum. You are showing up and building trust with yourself.
+    </p>
+  </div>
+  <div class="sos-link-wrap">
+    <a class="sos-link" href="sos.html" aria-label="Open Craving SOS">
+      Craving SOS - I need support now
+    </a>
+  </div>
+
+  <!-- Progress dots -->
+  <div class="progress" id="progress-dots" aria-hidden="true"></div>
+
+  <!-- Card -->
+  <div class="card">
+
+    <!-- ── Step 1: Mood ─────────────────────────────────── -->
+    <div class="step active" id="step-1" role="main">
+      <p class="eyebrow">Daily Check-In</p>
+      <h1>Hey. How are you feeling today?</h1>
+      <p class="sub" id="step1-sub">No right or wrong answer — just check in with yourself.</p>
+
+      <div class="mood-grid" role="group" aria-label="Select your mood">
+        <button class="mood-btn" data-mood="rough"    aria-pressed="false">
+          <span class="emoji">😔</span><span class="label">Rough</span>
+        </button>
+        <button class="mood-btn" data-mood="tough"    aria-pressed="false">
+          <span class="emoji">😤</span><span class="label">Tough</span>
+        </button>
+        <button class="mood-btn" data-mood="okay"     aria-pressed="false">
+          <span class="emoji">😐</span><span class="label">Okay</span>
+        </button>
+        <button class="mood-btn" data-mood="good"     aria-pressed="false">
+          <span class="emoji">🙂</span><span class="label">Good</span>
+        </button>
+        <button class="mood-btn" data-mood="great"    aria-pressed="false">
+          <span class="emoji">😊</span><span class="label">Great</span>
+        </button>
+      </div>
+
+      <div class="spacer"></div>
+      <button class="btn-primary" id="btn-mood-next" disabled>Next →</button>
+      <button class="btn-skip" id="btn-mood-skip">Skip mood</button>
+    </div>
+
+    <!-- ── Step 2: Sober confirmation ──────────────────── -->
+    <div class="step" id="step-2">
+      <p class="eyebrow">Daily Check-In</p>
+      <h1>Was today a sober day?</h1>
+      <p class="sub">Whatever the answer, it matters that you're here checking in.</p>
+
+      <div class="sober-options">
+        <button class="btn-sober btn-yes" id="btn-yes">
+          Yes — today was sober ✓
+        </button>
+        <button class="btn-sober btn-slip" id="btn-slip">
+          I had a slip today
+        </button>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ── Step 3a: Journal (sober) ─────────────────────── -->
+    <div class="step" id="step-3a">
+      <p class="eyebrow">Daily Check-In</p>
+      <h1>Anything you want to note?</h1>
+      <p class="sub">Optional — even one word is enough.</p>
+
+      <label class="journal-label" for="journal-sober">Your note (optional)</label>
+      <textarea
+        id="journal-sober"
+        rows="5"
+        maxlength="280"
+        placeholder="Feeling stronger than I expected today. Had a craving around 3pm but it passed…"
+        aria-label="Optional journal note"
+      ></textarea>
+      <div class="char-count"><span id="count-sober">0</span> / 280</div>
+
+      <div class="spacer"></div>
+      <button class="btn-primary" id="btn-journal-done">Save check-in</button>
+      <button class="btn-skip" id="btn-journal-skip">Skip note</button>
+    </div>
+
+    <!-- ── Step 3b: Journal (slip) ──────────────────────── -->
+    <div class="step" id="step-3b">
+      <p class="eyebrow">Daily Check-In</p>
+      <h1>Thank you for being honest.</h1>
+
+      <div class="compassion-box">
+        Logging a slip takes real courage. It means you're still here, still trying — and that's everything. Day 47 doesn't disappear. Your journey is still yours.
+      </div>
+
+      <label class="journal-label" for="journal-slip">Want to add anything? (optional)</label>
+      <textarea
+        id="journal-slip"
+        rows="4"
+        maxlength="280"
+        placeholder="What was going on today? What might help tomorrow?"
+        aria-label="Optional note about your slip"
+      ></textarea>
+      <div class="char-count"><span id="count-slip">0</span> / 280</div>
+
+      <div class="spacer"></div>
+      <button class="btn-primary" id="btn-slip-done">Save check-in</button>
+      <button class="btn-skip" id="btn-slip-skip">Skip note</button>
+    </div>
+
+    <!-- ── Step 4a: Complete (sober) ────────────────────── -->
+    <div class="step" id="step-4a">
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+        <div class="complete-icon">🌿</div>
+        <div class="milestone-badge" id="milestone-badge">🎉 Day 47 — Keep going</div>
+        <div class="complete-streak" id="complete-streak">47</div>
+        <div class="complete-streak-label" id="complete-streak-label">days sober</div>
+        <p class="sub" id="complete-tone-message" style="text-align:center; margin-bottom:20px;">
+          Quiet progress is still powerful progress.
+        </p>
+
+        <div style="width:100%; text-align:left; margin-top:8px;">
+          <div class="summary-row" id="summary-mood-row">
+            <span class="summary-emoji" id="summary-mood-emoji">😐</span>
+            <span>Feeling <strong id="summary-mood-label">okay</strong> today</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-emoji">✅</span>
+            <span><strong>Sober day confirmed</strong></span>
+          </div>
+          <div class="summary-row" id="summary-note-row" style="display:none">
+            <span class="summary-emoji">📝</span>
+            <span><strong>Note saved</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-done-sober" style="margin-top:28px;">Done</button>
+    </div>
+
+    <!-- ── Step 4b: Complete (slip) ─────────────────────── -->
+    <div class="step" id="step-4b">
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top: 16px;">
+        <div class="slip-complete-icon">🫂</div>
+        <p class="slip-heading">Check-in saved.</p>
+        <p class="slip-message">
+          You showed up today. That's not nothing — that's everything.<br><br>
+          Tomorrow is a new start. When you're ready, you can reset your streak. Or just take it one hour at a time.
+        </p>
+        <button
+          style="background:var(--accent-lt); color:#B06820; border:1.5px solid var(--accent); border-radius:12px; padding:14px 24px; font-size:15px; font-weight:700; cursor:pointer; width:100%; margin-bottom:12px;"
+          id="btn-reset-streak"
+        >Reset my streak</button>
+        <button class="btn-primary" id="btn-done-slip">I'll wait — keep my streak</button>
+      </div>
+    </div>
+
+  </div><!-- /card -->
+</div><!-- /shell -->
+<nav class="bottom-nav" aria-label="Primary navigation">
+  <a class="tab active" href="index.html" aria-current="page">Check-In</a>
+  <a class="tab" href="streak.html">Streak</a>
+  <a class="tab" href="sos.html">SOS</a>
+</nav>
+
+<script>
+  // ── State ──────────────────────────────────────────────
+  const state = {
+    mood: null,
+    sober: null,
+    note: '',
+    currentStreak: 47
+  };
+
+  const moodMeta = {
+    rough: { emoji: '😔', label: 'rough' },
+    tough: { emoji: '😤', label: 'tough' },
+    okay:  { emoji: '😐', label: 'okay'  },
+    good:  { emoji: '🙂', label: 'good'  },
+    great: { emoji: '😊', label: 'great' }
+  };
+
+  const streakMeta = {
+    1: {
+      badgeIcon: '🌱',
+      badgeText: 'Day 1 - A brave fresh start',
+      topbarIcon: '🌱',
+      step1Sub: 'Today can be simple. A quick check-in is enough.',
+      toneNote: 'Gentle start. One honest check-in is a real win today.',
+      completeTone: 'Day 1 counts. You showed up for yourself today.'
+    },
+    7: {
+      badgeIcon: '🌤️',
+      badgeText: 'Day 7 - One full week',
+      topbarIcon: '🌤️',
+      step1Sub: 'A week in - keep checking in one day at a time.',
+      toneNote: 'Building rhythm. Small daily steps are adding up.',
+      completeTone: 'One week is meaningful progress. Keep protecting your peace.'
+    },
+    30: {
+      badgeIcon: '🏅',
+      badgeText: 'Day 30 - One month strong',
+      topbarIcon: '🏅',
+      step1Sub: 'A month of effort behind you. How are you feeling right now?',
+      toneNote: 'Strong momentum. You have built real consistency.',
+      completeTone: 'Thirty days is a big milestone. Be proud of this month.'
+    },
+    47: {
+      badgeIcon: '🎉',
+      badgeText: 'Day 47 - Keep going',
+      topbarIcon: '🌿',
+      step1Sub: 'No right or wrong answer - just check in with yourself.',
+      toneNote: 'Steady momentum. You are showing up and building trust with yourself.',
+      completeTone: 'Quiet progress is still powerful progress.'
+    },
+    365: {
+      badgeIcon: '🥳',
+      badgeText: 'Day 365 - One full year',
+      topbarIcon: '🥳',
+      step1Sub: 'One year in recovery. Take a moment to feel how far you have come.',
+      toneNote: 'Celebration day. A full year of choosing yourself, one day at a time.',
+      completeTone: 'A full year. This is huge, and you earned every single day.'
+    }
+  };
+
+  // ── Date ───────────────────────────────────────────────
+  const dateEl = document.getElementById('today-date');
+  dateEl.textContent = new Date().toLocaleDateString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric'
+  });
+
+  const streakSelect = document.getElementById('streak-select');
+  const topbarStreak = document.getElementById('topbar-streak');
+  const streakToneNote = document.getElementById('streak-tone-note');
+  const step1Sub = document.getElementById('step1-sub');
+  const milestoneBadge = document.getElementById('milestone-badge');
+  const completeStreak = document.getElementById('complete-streak');
+  const completeStreakLabel = document.getElementById('complete-streak-label');
+  const completeToneMessage = document.getElementById('complete-tone-message');
+
+  function renderStreakState(day) {
+    const d = Number(day);
+    const meta = streakMeta[d] || streakMeta[47];
+    state.currentStreak = d;
+
+    topbarStreak.textContent = `${meta.topbarIcon} Day ${d}`;
+    streakToneNote.textContent = meta.toneNote;
+    step1Sub.textContent = meta.step1Sub;
+    milestoneBadge.textContent = `${meta.badgeIcon} ${meta.badgeText}`;
+    completeStreak.textContent = String(d);
+    completeStreakLabel.textContent = d === 1 ? 'day sober' : 'days sober';
+    completeToneMessage.textContent = meta.completeTone;
+  }
+
+  streakSelect.addEventListener('change', (e) => renderStreakState(e.target.value));
+  renderStreakState(streakSelect.value);
+
+  // ── Progress dots ──────────────────────────────────────
+  const TOTAL_STEPS = 4;
+  const dotsEl = document.getElementById('progress-dots');
+  for (let i = 0; i < TOTAL_STEPS; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    dotsEl.appendChild(d);
+  }
+
+  function setDots(activeIdx) {
+    const dots = dotsEl.querySelectorAll('.dot');
+    dots.forEach((d, i) => {
+      d.className = 'dot' + (i < activeIdx ? ' done' : i === activeIdx ? ' active' : '');
+    });
+  }
+
+  // ── Navigation ─────────────────────────────────────────
+  function showStep(id, dotIdx) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    setDots(dotIdx);
+  }
+
+  // ── Step 1: Mood ───────────────────────────────────────
+  const moodBtns   = document.querySelectorAll('.mood-btn');
+  const btnMoodNext = document.getElementById('btn-mood-next');
+
+  moodBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      moodBtns.forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
+      btn.classList.add('selected');
+      btn.setAttribute('aria-pressed', 'true');
+      state.mood = btn.dataset.mood;
+      btnMoodNext.disabled = false;
+    });
+  });
+
+  btnMoodNext.addEventListener('click', () => showStep('step-2', 1));
+
+  document.getElementById('btn-mood-skip').addEventListener('click', () => {
+    state.mood = null;
+    showStep('step-2', 1);
+  });
+
+  // ── Step 2: Sober ──────────────────────────────────────
+  document.getElementById('btn-yes').addEventListener('click', () => {
+    state.sober = true;
+    showStep('step-3a', 2);
+  });
+
+  document.getElementById('btn-slip').addEventListener('click', () => {
+    state.sober = false;
+    showStep('step-3b', 2);
+  });
+
+  // ── Step 3a: Journal (sober) ───────────────────────────
+  const journalSober = document.getElementById('journal-sober');
+  const countSober   = document.getElementById('count-sober');
+
+  journalSober.addEventListener('input', () => {
+    countSober.textContent = journalSober.value.length;
+    state.note = journalSober.value.trim();
+  });
+
+  document.getElementById('btn-journal-done').addEventListener('click', () => finishSober());
+  document.getElementById('btn-journal-skip').addEventListener('click', () => finishSober());
+
+  function finishSober() {
+    // Populate summary
+    const mm = moodMeta[state.mood];
+    if (mm) {
+      document.getElementById('summary-mood-emoji').textContent = mm.emoji;
+      document.getElementById('summary-mood-label').textContent = mm.label;
+    } else {
+      document.getElementById('summary-mood-row').style.display = 'none';
+    }
+    if (state.note || journalSober.value.trim()) {
+      document.getElementById('summary-note-row').style.display = 'flex';
+    }
+    showStep('step-4a', 3);
+  }
+
+  // ── Step 3b: Journal (slip) ────────────────────────────
+  const journalSlip = document.getElementById('journal-slip');
+  const countSlip   = document.getElementById('count-slip');
+
+  journalSlip.addEventListener('input', () => {
+    countSlip.textContent = journalSlip.value.length;
+  });
+
+  document.getElementById('btn-slip-done').addEventListener('click', () => showStep('step-4b', 3));
+  document.getElementById('btn-slip-skip').addEventListener('click', () => showStep('step-4b', 3));
+
+  // ── Step 4a: Done ──────────────────────────────────────
+  document.getElementById('btn-done-sober').addEventListener('click', () => {
+    alert('Check-in saved. See you tomorrow. 🌿');
+  });
+
+  // ── Step 4b: Slip done ─────────────────────────────────
+  document.getElementById('btn-done-slip').addEventListener('click', () => {
+    alert('Check-in saved. One hour at a time. 🫂');
+  });
+
+  document.getElementById('btn-reset-streak').addEventListener('click', () => {
+    if (confirm('Reset your streak to Day 0? This is a fresh start — not a failure.')) {
+      alert('Streak reset. Day 1 starts when you\'re ready. 🌱');
+    }
+  });
+</script>
+</body>
+</html>
