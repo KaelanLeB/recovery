@@ -4,10 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Craving SOS — Recovery App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="theme.css" />
   <style>
     .shell {
-      padding: 16px 18px 0;
+      padding: 20px 16px 0;
       gap: 12px;
     }
 
@@ -18,183 +21,239 @@
       gap: 12px;
       flex-shrink: 0;
     }
-
     .sos-back {
-      color: var(--primary);
+      color: var(--sage-700);
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 600;
       font-size: 14px;
       padding: 8px 4px;
       border-radius: var(--radius-sm);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
     }
     .sos-back:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
-
     .sos-kicker {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--muted);
+      color: var(--ink-500);
     }
 
     .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 22px 20px 22px;
-      border: 1px solid rgba(180, 210, 207, 0.35);
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 24px 20px;
     }
 
+    /* ── Hero ───────────────────────────────────────────── */
     .hero h1 {
-      font-size: 26px;
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
       line-height: 1.25;
       margin-bottom: 10px;
-      color: var(--text);
+      color: var(--ink-900);
     }
     .hero p {
-      font-size: 15px;
+      font-size: 16px;
       line-height: 1.65;
-      color: var(--text-lt);
+      color: var(--ink-700);
       margin-bottom: 14px;
     }
-
     .instant {
-      background: var(--primary-soft);
-      border-left: 4px solid var(--primary);
+      background: var(--sage-50);
+      border-left: 4px solid var(--sage-700);
       border-radius: var(--radius-sm);
       padding: 12px 14px;
-      font-size: 14px;
+      font-size: 15px;
       line-height: 1.6;
-      color: var(--text);
+      color: var(--ink-700);
     }
 
+    /* ── Breathing circle (pure CSS, no mascot) ─────────── */
     .breathing {
-      margin-top: 14px;
+      margin-top: 16px;
       text-align: center;
-      padding: 18px 14px 16px;
-      border-radius: var(--radius-sm);
-      background: linear-gradient(180deg, #F8FCFC 0%, #EFF6F6 100%);
-      border: 1px solid #DEEBEB;
+      padding: 24px 14px 20px;
+      border-radius: var(--radius-md);
+      background: var(--surface-2);
     }
 
-    .bubble {
+    .breath-circle {
       width: 120px;
       height: 120px;
-      border-radius: 999px;
-      margin: 0 auto 12px;
-      background: #E8F0F0;
-      border: 2px solid #D0E3E3;
-      display: grid;
-      place-items: center;
-      font-size: 28px;
-      transition: transform 0.7s ease, background 0.7s ease, border-color 0.7s ease;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      background: radial-gradient(circle at 40% 38%, #c8e6e2 0%, #a8d4cf 60%, #7fbfb9 100%);
+      box-shadow: 0 0 0 0 rgba(47,85,80,.15);
+      animation: breathe-idle 4s ease-in-out infinite;
     }
-    .bubble.inhale {
-      transform: scale(1.14);
-      background: #DDF0F0;
-      border-color: #B8D8D8;
+    .breath-circle.inhale {
+      animation: breathe-in 4s ease-in-out forwards;
     }
-    .bubble.exhale {
-      transform: scale(0.92);
-      background: #F1F7F7;
-      border-color: #D3E5E5;
+    .breath-circle.exhale {
+      animation: breathe-out 6s ease-in-out forwards;
+    }
+
+    @keyframes breathe-idle {
+      0%, 100% { transform: scale(0.9);  box-shadow: 0 0 0 0 rgba(47,85,80,.12); }
+      50%       { transform: scale(1.1); box-shadow: 0 0 0 16px rgba(47,85,80,.04); }
+    }
+    @keyframes breathe-in {
+      from { transform: scale(0.9);  box-shadow: 0 0 0 0 rgba(47,85,80,.12); }
+      to   { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(47,85,80,.04); }
+    }
+    @keyframes breathe-out {
+      from { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(47,85,80,.04); }
+      to   { transform: scale(0.9);  box-shadow: 0 0 0 0 rgba(47,85,80,.12); }
     }
 
     .phase {
-      font-size: 26px;
-      font-weight: 800;
-      color: var(--primary);
+      font-family: 'Fraunces', serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--sage-700);
       line-height: 1;
       margin-bottom: 8px;
     }
     .phase-note {
-      font-size: 14px;
-      color: var(--text-lt);
+      font-size: 15px;
+      color: var(--ink-500);
       line-height: 1.55;
       min-height: 44px;
     }
 
+    /* ── Grounding ──────────────────────────────────────── */
     .sos-section-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--text);
-      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink-900);
+      margin: 0 0 6px;
     }
-
     .grounding {
-      margin-top: 14px;
-      border-radius: var(--radius-sm);
-      border: 1px solid #E2ECEC;
-      padding: 14px;
-      background: #FBFDFD;
+      margin-top: 16px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--sage-100);
+      padding: 16px;
+      background: var(--surface-2);
     }
     .grounding > p:first-of-type {
-      font-size: 14px;
-      color: var(--text-lt);
+      font-size: 15px;
+      color: var(--ink-700);
       line-height: 1.6;
       margin-bottom: 12px;
     }
     .prompt {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--primary-dk);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--sage-700);
       line-height: 1.45;
       margin-bottom: 12px;
     }
 
+    /* ── Action buttons ─────────────────────────────────── */
     .actions {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-top: 14px;
+      margin-top: 16px;
     }
-    button,
-    .action-link {
+
+    /* Primary — sage fill */
+    .btn-primary {
       border: none;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-pill);
       width: 100%;
-      padding: 14px 12px;
-      font-size: 15px;
-      font-weight: 700;
-      font-family: inherit;
+      padding: 16px 12px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'Inter', inherit;
       cursor: pointer;
       text-align: center;
-    }
-    .btn-primary {
-      background: var(--primary);
+      background: var(--sage-700);
       color: #fff;
+      box-shadow: 0 4px 16px rgba(47,85,80,.2);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      min-height: 52px;
     }
     .btn-primary:hover {
-      background: var(--primary-dk);
+      background: var(--sage-600);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(47,85,80,.28);
     }
-    .btn-soft {
-      background: #F0F5F5;
-      color: var(--primary-dk);
-      border: 1px solid #DCE8E8;
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    /* Supportive — surface-2 fill, sage border */
+    .btn-supportive {
+      border: 1.5px solid var(--sage-100);
+      border-radius: var(--radius-pill);
+      width: 100%;
+      padding: 16px 12px;
+      font-size: 16px;
       font-weight: 600;
-    }
-    .action-link {
+      font-family: 'Inter', inherit;
+      cursor: pointer;
+      text-align: center;
+      background: var(--surface-2);
+      color: var(--ink-700);
       text-decoration: none;
-      background: var(--accent-lt);
-      color: var(--accent-text);
-      border: 1px solid rgba(212, 146, 106, 0.45);
+      display: block;
+      transition: background 0.2s, border-color 0.2s;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    button:focus-visible,
-    .action-link:focus-visible {
+    .btn-supportive:hover {
+      background: var(--sage-50);
+      border-color: var(--sage-700);
+      color: var(--sage-700);
+    }
+    .btn-supportive:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    /* Next grounding prompt — reuse btn-soft style inline */
+    .btn-next-prompt {
+      border: 1.5px solid var(--sage-100);
+      border-radius: var(--radius-md);
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Inter', inherit;
+      cursor: pointer;
+      background: var(--sage-50);
+      color: var(--sage-700);
+      min-height: 44px;
+      transition: background 0.2s;
+    }
+    .btn-next-prompt:hover { background: var(--sage-100); }
+    .btn-next-prompt:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
 
     .footer-note {
-      font-size: 12px;
-      color: var(--text-lt);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-500);
       text-align: center;
       line-height: 1.5;
-      margin-top: 4px;
-      padding: 0 8px 8px;
+      padding: 4px 8px 8px;
     }
   </style>
 </head>
@@ -222,7 +281,7 @@
         aria-label="Guided breathing"
         role="region"
       >
-        <div id="breath-bubble" class="bubble inhale" aria-hidden="true">🌬️</div>
+        <div id="breath-bubble" class="breath-circle" aria-hidden="true"></div>
         <div id="phase" class="phase">Breathe in (4)</div>
         <p id="phase-note" class="phase-note">
           Slow inhale through your nose. No need to be perfect.
@@ -233,7 +292,7 @@
         <h2 id="grounding-title" class="sos-section-title">Grounding prompt</h2>
         <p>When you're ready, do one prompt at a time. Keep it simple.</p>
         <p class="prompt" id="grounding-prompt">Name 5 things you can see.</p>
-        <button id="next-prompt" class="btn-soft" type="button">
+        <button id="next-prompt" class="btn-next-prompt" type="button">
           Next prompt
         </button>
       </section>
@@ -242,7 +301,7 @@
         <button class="btn-primary" id="repeat-minute" type="button">
           Repeat 1-minute reset
         </button>
-        <a class="action-link" href="index.html">I’m ready to return to check-in</a>
+        <a class="btn-supportive" href="index.html">I'm ready to return to check-in</a>
       </div>
     </section>
 
@@ -252,16 +311,24 @@
   </main>
 
   <nav class="bottom-nav" aria-label="Primary navigation">
-    <a class="tab" href="index.html"><span class="tab-label">Check-In</span></a>
-    <a class="tab tab-sos active" href="sos.html" aria-current="page" aria-label="Craving SOS — get support now"><span class="tab-label">SOS</span></a>
-    <a class="tab" href="streak.html"><span class="tab-label">Streak</span></a>
+    <a class="tab" href="index.html">
+      <span class="tab-icon" aria-hidden="true">○</span>
+      <span class="tab-label">Check-In</span>
+    </a>
+    <a class="tab tab-sos active" href="sos.html" aria-current="page" aria-label="Craving SOS — get support now">
+      <span class="tab-label">SOS</span>
+    </a>
+    <a class="tab" href="streak.html">
+      <span class="tab-icon" aria-hidden="true">✦</span>
+      <span class="tab-label">Streak</span>
+    </a>
   </nav>
 
   <script>
     const breathingPlan = [
-      { phase: 'Breathe in', seconds: 4, note: 'Slow inhale through your nose. No need to be perfect.', bubble: 'inhale' },
-      { phase: 'Hold', seconds: 4, note: 'Keep your shoulders soft. You are doing well.', bubble: 'inhale' },
-      { phase: 'Breathe out', seconds: 6, note: 'Long, steady exhale through your mouth.', bubble: 'exhale' }
+      { phase: 'Breathe in',  seconds: 4, note: 'Slow inhale through your nose. No need to be perfect.', anim: 'inhale' },
+      { phase: 'Hold',        seconds: 4, note: 'Keep your shoulders soft. You are doing well.',          anim: 'inhale' },
+      { phase: 'Breathe out', seconds: 6, note: 'Long, steady exhale through your mouth.',                anim: 'exhale' }
     ];
 
     const groundingPrompts = [
@@ -272,24 +339,29 @@
       'Name 1 thing you can taste.'
     ];
 
-    const phaseEl = document.getElementById('phase');
-    const phaseNoteEl = document.getElementById('phase-note');
-    const bubbleEl = document.getElementById('breath-bubble');
-    const promptEl = document.getElementById('grounding-prompt');
+    const phaseEl      = document.getElementById('phase');
+    const phaseNoteEl  = document.getElementById('phase-note');
+    const bubbleEl     = document.getElementById('breath-bubble');
+    const promptEl     = document.getElementById('grounding-prompt');
     const nextPromptBtn = document.getElementById('next-prompt');
-    const repeatBtn = document.getElementById('repeat-minute');
+    const repeatBtn    = document.getElementById('repeat-minute');
 
-    let planIndex = 0;
+    let planIndex  = 0;
     let secondsLeft = breathingPlan[0].seconds;
     let promptIndex = 0;
     let tickId;
+
+    function applyBubbleAnim(anim) {
+      bubbleEl.classList.remove('inhale', 'exhale');
+      void bubbleEl.offsetWidth; // reflow to restart animation
+      bubbleEl.classList.add(anim);
+    }
 
     function renderPhase() {
       const current = breathingPlan[planIndex];
       phaseEl.textContent = `${current.phase} (${secondsLeft})`;
       phaseNoteEl.textContent = current.note;
-      bubbleEl.classList.remove('inhale', 'exhale');
-      bubbleEl.classList.add(current.bubble);
+      applyBubbleAnim(current.anim);
     }
 
     function stepBreath() {
@@ -297,13 +369,15 @@
       if (secondsLeft <= 0) {
         planIndex = (planIndex + 1) % breathingPlan.length;
         secondsLeft = breathingPlan[planIndex].seconds;
+        applyBubbleAnim(breathingPlan[planIndex].anim);
       }
-      renderPhase();
+      phaseEl.textContent = `${breathingPlan[planIndex].phase} (${secondsLeft})`;
+      phaseNoteEl.textContent = breathingPlan[planIndex].note;
     }
 
     function startBreathingLoop() {
       clearInterval(tickId);
-      planIndex = 0;
+      planIndex   = 0;
       secondsLeft = breathingPlan[0].seconds;
       renderPhase();
       tickId = setInterval(stepBreath, 1000);

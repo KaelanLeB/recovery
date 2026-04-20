@@ -4,97 +4,92 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Daily Check-In — Recovery App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="theme.css" />
   <style>
-    /* Check-in page — layout + flow only (tokens in theme.css) */
+    /* Check-in page */
 
-    /* ── Hero (greeting + streak summary) ─────────────── */
-    .hero-panel {
-      padding: 18px 20px 12px;
-    }
-    .hero-greeting {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text-lt);
-      margin-bottom: 12px;
-    }
-    .hero-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px 20px 16px;
-      border: 1px solid rgba(180, 210, 207, 0.35);
-    }
-    .hero-streak-row {
+    /* ── Compact header row ─────────────────────────────── */
+    .checkin-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 20px 20px 0;
       gap: 12px;
-      margin-bottom: 8px;
     }
-    .hero-streak-pill {
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .greeting-line {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-500);
+    }
+    .streak-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-size: 14px;
-      font-weight: 700;
-      color: var(--primary);
-      background: var(--primary-soft);
-      border: 1px solid var(--primary-border);
-      border-radius: 999px;
-      padding: 8px 14px;
-      letter-spacing: 0.01em;
-    }
-    .hero-date {
-      font-size: 13px;
-      color: var(--muted);
       font-weight: 600;
+      color: var(--sage-700);
+      background: var(--sage-50);
+      border: 1px solid var(--sage-100);
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
     }
-    .hero-sub {
+    .header-date {
+      font-size: 12px;
+      color: var(--ink-300);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    /* SOS pill (top-right) */
+    .sos-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-size: 13px;
-      line-height: 1.5;
-      color: var(--text-lt);
+      font-weight: 600;
+      color: var(--alert-600);
+      background: transparent;
+      border: 1.5px solid var(--alert-200);
+      border-radius: var(--radius-pill);
+      padding: 8px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .sos-pill:hover {
+      background: var(--alert-200);
+    }
+    .sos-pill:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--alert-600);
+    }
+    .sos-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--alert-600);
+      flex-shrink: 0;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .5; transform: scale(.7); }
     }
 
-    .proto-details {
-      margin: 12px 20px 0;
-      border: 1px dashed rgba(107, 127, 135, 0.45);
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, 0.65);
-      padding: 0 12px;
-    }
-    .proto-details summary {
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--muted);
-      padding: 10px 0;
-      list-style: none;
-      border-radius: var(--radius-sm);
-    }
-    .proto-details summary:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-    .proto-details summary::-webkit-details-marker { display: none; }
-    .proto-details .streak-tester-inner {
-      padding-bottom: 12px;
-    }
-    .proto-details label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-    .proto-details select {
-      width: 100%;
-      border: 1.5px solid #D8E4E4;
-      border-radius: 10px;
-      background: #fff;
-      font-size: 14px;
-      color: var(--text);
-      font-family: inherit;
-      padding: 10px 12px;
+    .tone-note {
+      padding: 8px 20px 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--ink-500);
     }
 
     /* ── Progress dots ──────────────────────────────────── */
@@ -102,24 +97,24 @@
       display: flex;
       gap: 6px;
       justify-content: center;
-      padding: 20px 0 4px;
+      padding: 16px 0 4px;
     }
     .dot {
-      width: 8px; height: 8px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: #D4E2E2;
+      background: var(--sage-100);
       transition: background 0.3s, transform 0.3s;
     }
-    .dot.active  { background: var(--primary); transform: scale(1.25); }
-    .dot.done    { background: var(--accent); }
+    .dot.active  { background: var(--sage-700); transform: scale(1.3); }
+    .dot.done    { background: var(--sage-600); }
 
     /* ── Card ───────────────────────────────────────────── */
     .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      margin: 16px 20px 0;
-      padding: 32px 28px 28px;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      margin: 12px 16px 0;
+      padding: 28px 24px 24px;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -127,68 +122,129 @@
 
     /* ── Step visibility ────────────────────────────────── */
     .step { display: none; flex-direction: column; flex: 1; }
-    .step.active { display: flex; animation: fadeUp 0.35s ease; }
+    .step.active { display: flex; animation: fadeUp 0.3s var(--ease); }
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
+      from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ── Typography ─────────────────────────────────────── */
-    .eyebrow {
-      font-size: 12px;
-      font-weight: 700;
+    .step-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-bottom: 12px;
+      color: var(--ink-500);
+      margin-bottom: 10px;
     }
     h1 {
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 1.3;
-      color: var(--text);
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+      color: var(--ink-900);
       margin-bottom: 8px;
     }
     .sub {
-      font-size: 15px;
-      color: var(--text-lt);
+      font-size: 16px;
+      color: var(--ink-700);
       line-height: 1.6;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
-    /* ── Mood chips (pill picks) ─────────────────────────── */
-    .mood-chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-    .mood-chip {
-      background: var(--surface);
-      border: 2px solid #E2EEEE;
-      border-radius: 999px;
-      padding: 11px 16px 10px;
-      cursor: pointer;
-      display: inline-flex;
-      flex-direction: row;
-      align-items: center;
+    /* ── Mood grid ──────────────────────────────────────── */
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
-      transition: border-color 0.2s, background 0.2s, transform 0.15s, box-shadow 0.2s;
+      margin-bottom: 20px;
+    }
+    .mood-btn {
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 14px 4px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
       -webkit-tap-highlight-color: transparent;
       font-family: inherit;
+      min-height: 72px;
     }
-    .mood-chip:focus-visible {
+    .mood-btn:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
+      border-radius: var(--radius-md);
     }
-    .mood-chip .emoji { font-size: 22px; line-height: 1; }
-    .mood-chip .label { font-size: 14px; font-weight: 600; color: var(--text-lt); letter-spacing: 0.02em; }
-    .mood-chip.selected {
-      border-color: var(--primary);
-      background: var(--primary-soft);
-      box-shadow: 0 2px 12px rgba(20, 110, 105, 0.12);
+    .mood-btn .emoji {
+      font-size: 28px;
+      line-height: 1;
+      display: block;
+      transition: transform 0.2s var(--ease);
     }
-    .mood-chip.selected .label { color: var(--primary-dk); }
+    .mood-btn .label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-500);
+      letter-spacing: 0;
+    }
+    .mood-btn:hover .emoji { transform: scale(1.08); }
+
+    /* Mood halos on selection */
+    .mood-btn[aria-pressed="true"] .emoji { transform: scale(1.12); }
+    .mood-btn[data-mood="rough"][aria-pressed="true"]  { background: #efeae4; border: 1.5px solid #d6ccc0; }
+    .mood-btn[data-mood="tough"][aria-pressed="true"]  { background: #eaeef4; border: 1.5px solid #c8d3e1; }
+    .mood-btn[data-mood="okay"][aria-pressed="true"]   { background: #f0eeea; border: 1.5px solid #d3ccc1; }
+    .mood-btn[data-mood="good"][aria-pressed="true"]   { background: var(--good-50); border: 1.5px solid #c8dcce; }
+    .mood-btn[data-mood="great"][aria-pressed="true"]  { background: var(--warn-50); border: 1.5px solid #ddcda0; }
+    .mood-btn[aria-pressed="true"] .label { color: var(--ink-700); }
+
+    /* ── Journal reveal (optional) ──────────────────────── */
+    .journal-reveal {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: max-height 0.35s var(--ease), opacity 0.3s var(--ease), transform 0.3s var(--ease);
+      margin-bottom: 0;
+    }
+    .journal-reveal.visible {
+      max-height: 120px;
+      opacity: 1;
+      transform: translateY(0);
+      margin-bottom: 20px;
+    }
+    .journal-inline-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-500);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .journal-inline {
+      width: 100%;
+      border: 1.5px solid var(--sage-100);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 15px;
+      font-family: 'Inter', inherit;
+      color: var(--ink-900);
+      resize: none;
+      line-height: 1.5;
+      background: var(--surface-2);
+      transition: border-color 0.2s;
+    }
+    .journal-inline:focus {
+      outline: none;
+      border-color: var(--sage-700);
+      background: var(--surface);
+    }
+    .journal-inline:focus-visible { box-shadow: var(--focus-ring); }
+    .journal-inline::placeholder { color: var(--ink-300); }
 
     /* ── Sober buttons ──────────────────────────────────── */
     .sober-options {
@@ -200,14 +256,14 @@
     .btn-sober {
       width: 100%;
       padding: 18px;
-      border-radius: 14px;
+      border-radius: var(--radius-md);
       border: none;
       font-size: 17px;
       font-weight: 700;
       cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
+      transition: background 0.2s, transform 0.15s;
       -webkit-tap-highlight-color: transparent;
-      letter-spacing: 0.01em;
+      font-family: inherit;
     }
     .btn-sober:active { transform: scale(0.97); }
     .btn-sober:focus-visible {
@@ -215,182 +271,294 @@
       box-shadow: var(--focus-ring);
     }
     .btn-yes {
-      background: var(--primary);
+      background: var(--sage-700);
       color: #fff;
     }
-    .btn-yes:hover { background: var(--primary-dk); }
+    .btn-yes:hover { background: var(--sage-600); }
     .btn-slip {
-      background: var(--danger-lt);
-      color: var(--danger);
+      background: var(--alert-200);
+      color: var(--alert-600);
       font-size: 15px;
       font-weight: 600;
       padding: 14px;
     }
-    .btn-slip:hover { background: #FCDEDE; }
+    .btn-slip:hover { background: #f0c8c2; }
 
-    /* ── Textarea ───────────────────────────────────────── */
+    /* ── Textarea (step 3) ──────────────────────────────── */
     .journal-label {
       font-size: 14px;
       font-weight: 600;
-      color: var(--text-lt);
+      color: var(--ink-700);
       margin-bottom: 10px;
     }
     textarea {
       width: 100%;
-      border: 2px solid #E8EEEE;
-      border-radius: 12px;
+      border: 1.5px solid var(--sage-100);
+      border-radius: var(--radius-md);
       padding: 14px 16px;
-      font-size: 15px;
-      font-family: inherit;
-      color: var(--text);
+      font-size: 16px;
+      font-family: 'Inter', inherit;
+      color: var(--ink-900);
       resize: none;
       line-height: 1.6;
       transition: border-color 0.2s;
-      background: #FAFBFB;
+      background: var(--surface-2);
       margin-bottom: 8px;
     }
     textarea:focus {
       outline: none;
-      border-color: var(--primary);
-      background: #fff;
+      border-color: var(--sage-700);
+      background: var(--surface);
     }
-    textarea:focus-visible {
-      box-shadow: var(--focus-ring);
-    }
-    textarea::placeholder { color: #B0C0C0; }
+    textarea:focus-visible { box-shadow: var(--focus-ring); }
+    textarea::placeholder { color: var(--ink-300); }
     .char-count {
-      font-size: 12px;
-      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-300);
       text-align: right;
       margin-bottom: 24px;
     }
 
-    /* ── Compassion box (slip) ──────────────────────────── */
+    /* ── Compassion box ─────────────────────────────────── */
     .compassion-box {
-      background: var(--accent-lt);
+      background: var(--warn-50);
       border-left: 4px solid var(--accent);
-      border-radius: 10px;
+      border-radius: var(--radius-sm);
       padding: 14px 16px;
       margin-bottom: 24px;
-      font-size: 14px;
+      font-size: 15px;
       line-height: 1.65;
-      color: var(--text);
+      color: var(--ink-700);
     }
 
-    /* ── Primary CTA ────────────────────────────────────── */
+    /* ── Buttons ────────────────────────────────────────── */
+
+    /* Primary */
     .btn-primary {
       width: 100%;
-      padding: 18px;
-      border-radius: 14px;
+      padding: 17px;
+      border-radius: var(--radius-pill);
       border: none;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--primary);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: not-allowed;
+      background: var(--ink-300);
       color: #fff;
-      transition: background 0.2s, transform 0.15s, opacity 0.2s;
-      letter-spacing: 0.01em;
+      transition: background 0.3s var(--ease), transform 0.2s var(--ease), box-shadow 0.3s var(--ease);
+      letter-spacing: 0;
       -webkit-tap-highlight-color: transparent;
       margin-top: auto;
+      font-family: 'Inter', inherit;
     }
-    .btn-primary:hover  { background: var(--primary-dk); }
-    .btn-primary:active { transform: scale(0.97); }
-    .btn-primary:focus-visible {
+    .btn-primary .arrow {
+      display: inline-block;
+      transition: transform 0.2s var(--ease);
+    }
+    .btn-primary.ready {
+      background: var(--sage-700);
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(47,85,80,.2);
+    }
+    .btn-primary.ready:hover {
+      background: var(--sage-600);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(47,85,80,.28);
+    }
+    .btn-primary.ready:hover .arrow { transform: translateX(4px); }
+    .btn-primary.ready:active { transform: scale(0.97); }
+    .btn-primary.ready:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    /* Non-mood-gated primary buttons (always active) */
+    .btn-primary.always-ready {
+      background: var(--sage-700);
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(47,85,80,.2);
+    }
+    .btn-primary.always-ready:hover {
+      background: var(--sage-600);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(47,85,80,.28);
+    }
+    .btn-primary.always-ready:active { transform: scale(0.97); }
+    .btn-primary.always-ready:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
 
-    .btn-skip {
+    /* Supportive */
+    .btn-supportive {
       background: none;
       border: none;
-      color: var(--muted);
+      color: var(--ink-500);
       font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
-      margin-top: 14px;
+      margin-top: 12px;
       text-align: center;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      font-family: 'Inter', inherit;
+      padding: 8px;
     }
-    .btn-skip:focus-visible {
+    .btn-supportive:hover { color: var(--ink-700); }
+    .btn-supportive:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
-      border-radius: 4px;
+      border-radius: var(--radius-sm);
     }
 
     /* ── Complete screen ────────────────────────────────── */
-    .complete-icon {
-      font-size: 56px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    .complete-icon { font-size: 52px; text-align: center; margin-bottom: 16px; }
     .milestone-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--accent-lt);
-      border: 1.5px solid var(--accent);
-      border-radius: 20px;
+      background: var(--good-50);
+      border: 1.5px solid #c8dcce;
+      border-radius: var(--radius-pill);
       padding: 6px 14px;
       font-size: 13px;
-      font-weight: 700;
-      color: var(--accent-text);
-      margin-bottom: 24px;
+      font-weight: 600;
+      color: var(--sage-700);
+      margin-bottom: 20px;
     }
     .complete-streak {
-      font-size: 52px;
-      font-weight: 800;
-      color: var(--primary);
+      font-family: 'Fraunces', serif;
+      font-size: 96px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: var(--sage-700);
       text-align: center;
       line-height: 1;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     .complete-streak-label {
-      font-size: 15px;
-      color: var(--text-lt);
+      font-size: 16px;
+      color: var(--ink-500);
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     .summary-row {
       display: flex;
       align-items: center;
       gap: 12px;
       padding: 12px 0;
-      border-top: 1px solid #EEF2F2;
-      font-size: 14px;
-      color: var(--text-lt);
+      border-top: 1px solid var(--sage-50);
+      font-size: 15px;
+      color: var(--ink-700);
     }
     .summary-row .summary-emoji { font-size: 20px; }
-    .summary-row strong { color: var(--text); }
+    .summary-row strong { color: var(--ink-900); }
 
     .slip-complete-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
-    .slip-heading { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
-    .slip-message { font-size: 15px; color: var(--text-lt); line-height: 1.65; margin-bottom: 28px; }
+    .slip-heading {
+      font-family: 'Fraunces', serif;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      margin-bottom: 10px;
+      color: var(--ink-900);
+    }
+    .slip-message {
+      font-size: 16px;
+      color: var(--ink-700);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+
+    /* Reset button in slip complete */
+    .btn-reset-streak {
+      background: var(--alert-200);
+      color: var(--alert-600);
+      border: 1.5px solid #e0aea8;
+      border-radius: var(--radius-md);
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 12px;
+      font-family: 'Inter', inherit;
+    }
+    .btn-reset-streak:hover { background: #f0c8c2; }
+    .btn-reset-streak:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--alert-600);
+    }
 
     /* ── Spacer ─────────────────────────────────────────── */
     .spacer { flex: 1; }
+
+    /* ── Dev controls (hidden by default) ──────────────── */
+    .dev-controls {
+      display: none;
+      margin: 12px 16px 0;
+      border: 1px dashed rgba(107,127,135,.45);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.65);
+      padding: 0 12px;
+    }
+    .dev-controls.visible { display: block; }
+    .dev-controls summary {
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-300);
+      padding: 10px 0;
+      list-style: none;
+    }
+    .dev-controls summary::-webkit-details-marker { display: none; }
+    .dev-controls summary:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .dev-controls-inner { padding-bottom: 12px; }
+    .dev-controls label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-300);
+      margin-bottom: 6px;
+    }
+    .dev-controls select {
+      width: 100%;
+      border: 1.5px solid var(--sage-100);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      font-size: 14px;
+      color: var(--ink-900);
+      font-family: inherit;
+      padding: 10px 12px;
+    }
   </style>
 </head>
 <body>
 <a class="skip-link" href="#check-in-main">Skip to check-in</a>
 <div class="shell">
 
-  <header class="hero-panel" aria-label="Today">
-    <p class="hero-greeting" id="greeting-line">Hi there,</p>
-    <div class="hero-card">
-      <div class="hero-streak-row">
-        <span class="hero-streak-pill" id="topbar-streak">🌿 Day 47</span>
-        <span class="hero-date" id="today-date"></span>
-      </div>
-      <p class="hero-sub" id="streak-tone-note">
-        Steady momentum. You are showing up and building trust with yourself.
-      </p>
+  <!-- ── Compact header ──────────────────────────────────── -->
+  <header class="checkin-header" aria-label="Today">
+    <div class="header-left">
+      <span class="greeting-line" id="greeting-line">Good morning,</span>
+      <span class="streak-pill" id="topbar-streak">🌿 Day 47</span>
+      <span class="header-date" id="today-date"></span>
     </div>
+    <a class="sos-pill" href="sos.html" aria-label="Craving SOS — get support now">
+      <span class="sos-dot" aria-hidden="true"></span>SOS
+    </a>
   </header>
 
-  <details class="proto-details">
-    <summary>Prototype: streak preview</summary>
-    <div class="streak-tester-inner">
+  <p class="tone-note" id="streak-tone-note">
+    Steady momentum. You are showing up and building trust with yourself.
+  </p>
+
+  <!-- Dev controls — only visible with ?dev=1 -->
+  <details class="dev-controls" id="dev-controls">
+    <summary>Dev controls</summary>
+    <div class="dev-controls-inner">
       <label for="streak-select">Streak state</label>
       <select id="streak-select" aria-label="Select streak day for prototype">
         <option value="1">Day 1</option>
@@ -410,36 +578,52 @@
 
     <!-- ── Step 1: Mood ─────────────────────────────────── -->
     <div class="step active" id="step-1">
-      <p class="eyebrow">Daily Check-In</p>
+      <p class="step-eyebrow">Daily Check-In</p>
       <h1>Hey. How are you feeling today?</h1>
       <p class="sub" id="step1-sub">No right or wrong answer — just check in with yourself.</p>
 
-      <div class="mood-chip-row" role="group" aria-label="Select your mood">
-        <button type="button" class="mood-chip" data-mood="rough" aria-pressed="false">
+      <div class="mood-grid" role="radiogroup" aria-label="Select your mood">
+        <button type="button" class="mood-btn" data-mood="rough" aria-pressed="false" role="radio" aria-checked="false">
           <span class="emoji" aria-hidden="true">😔</span><span class="label">Rough</span>
         </button>
-        <button type="button" class="mood-chip" data-mood="tough" aria-pressed="false">
-          <span class="emoji" aria-hidden="true">😤</span><span class="label">Tough</span>
+        <button type="button" class="mood-btn" data-mood="tough" aria-pressed="false" role="radio" aria-checked="false">
+          <span class="emoji" aria-hidden="true">🥺</span><span class="label">Tough</span>
         </button>
-        <button type="button" class="mood-chip" data-mood="okay" aria-pressed="false">
+        <button type="button" class="mood-btn" data-mood="okay" aria-pressed="false" role="radio" aria-checked="false">
           <span class="emoji" aria-hidden="true">😐</span><span class="label">Okay</span>
         </button>
-        <button type="button" class="mood-chip" data-mood="good" aria-pressed="false">
+        <button type="button" class="mood-btn" data-mood="good" aria-pressed="false" role="radio" aria-checked="false">
           <span class="emoji" aria-hidden="true">🙂</span><span class="label">Good</span>
         </button>
-        <button type="button" class="mood-chip" data-mood="great" aria-pressed="false">
-          <span class="emoji" aria-hidden="true">😊</span><span class="label">Great</span>
+        <button type="button" class="mood-btn" data-mood="great" aria-pressed="false" role="radio" aria-checked="false">
+          <span class="emoji" aria-hidden="true">😌</span><span class="label">Great</span>
         </button>
       </div>
 
+      <!-- Optional inline journal reveal -->
+      <div class="journal-reveal" id="inline-journal-wrap" aria-hidden="true">
+        <label class="journal-inline-label" for="inline-journal">One line, if you want to</label>
+        <textarea
+          class="journal-inline"
+          id="inline-journal"
+          rows="2"
+          maxlength="280"
+          placeholder="What's on your mind today?"
+          aria-label="Optional one-line note"
+          tabindex="-1"
+        ></textarea>
+      </div>
+
       <div class="spacer"></div>
-      <button class="btn-primary" id="btn-mood-next" disabled>Next →</button>
-      <button class="btn-skip" id="btn-mood-skip">Skip mood</button>
+      <button class="btn-primary" id="btn-mood-next" disabled aria-disabled="true">
+        Next <span class="arrow">→</span>
+      </button>
+      <button class="btn-supportive" id="btn-mood-skip">Skip mood</button>
     </div>
 
     <!-- ── Step 2: Sober confirmation ──────────────────── -->
     <div class="step" id="step-2">
-      <p class="eyebrow">Daily Check-In</p>
+      <p class="step-eyebrow">Daily Check-In</p>
       <h1>Was today a sober day?</h1>
       <p class="sub">Whatever the answer, it matters that you're here checking in.</p>
 
@@ -456,7 +640,7 @@
 
     <!-- ── Step 3a: Journal (sober) ─────────────────────── -->
     <div class="step" id="step-3a">
-      <p class="eyebrow">Daily Check-In</p>
+      <p class="step-eyebrow">Daily Check-In</p>
       <h1>Anything you want to note?</h1>
       <p class="sub">Optional — even one word is enough.</p>
 
@@ -471,13 +655,13 @@
       <div class="char-count"><span id="count-sober">0</span> / 280</div>
 
       <div class="spacer"></div>
-      <button class="btn-primary" id="btn-journal-done">Save check-in</button>
-      <button class="btn-skip" id="btn-journal-skip">Skip note</button>
+      <button class="btn-primary always-ready" id="btn-journal-done">Save check-in</button>
+      <button class="btn-supportive" id="btn-journal-skip">Skip note</button>
     </div>
 
     <!-- ── Step 3b: Journal (slip) ──────────────────────── -->
     <div class="step" id="step-3b">
-      <p class="eyebrow">Daily Check-In</p>
+      <p class="step-eyebrow">Daily Check-In</p>
       <h1>Thank you for being honest.</h1>
 
       <div class="compassion-box">
@@ -495,8 +679,8 @@
       <div class="char-count"><span id="count-slip">0</span> / 280</div>
 
       <div class="spacer"></div>
-      <button class="btn-primary" id="btn-slip-done">Save check-in</button>
-      <button class="btn-skip" id="btn-slip-skip">Skip note</button>
+      <button class="btn-primary always-ready" id="btn-slip-done">Save check-in</button>
+      <button class="btn-supportive" id="btn-slip-skip">Skip note</button>
     </div>
 
     <!-- ── Step 4a: Complete (sober) ────────────────────── -->
@@ -526,35 +710,46 @@
         </div>
       </div>
 
-      <button class="btn-primary" id="btn-done-sober" style="margin-top:28px;">Done</button>
+      <button class="btn-primary always-ready" id="btn-done-sober" style="margin-top:28px;">Done</button>
     </div>
 
     <!-- ── Step 4b: Complete (slip) ─────────────────────── -->
     <div class="step" id="step-4b">
-      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top: 16px;">
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top:16px;">
         <div class="slip-complete-icon">🫂</div>
         <p class="slip-heading">Check-in saved.</p>
         <p class="slip-message">
           You showed up today. That's not nothing — that's everything.<br><br>
           Tomorrow is a new start. When you're ready, you can reset your streak. Or just take it one hour at a time.
         </p>
-        <button
-          style="background:var(--accent-lt); color:#B06820; border:1.5px solid var(--accent); border-radius:12px; padding:14px 24px; font-size:15px; font-weight:700; cursor:pointer; width:100%; margin-bottom:12px;"
-          id="btn-reset-streak"
-        >Reset my streak</button>
-        <button class="btn-primary" id="btn-done-slip">I'll wait — keep my streak</button>
+        <button class="btn-reset-streak" id="btn-reset-streak">Reset my streak</button>
+        <button class="btn-primary always-ready" id="btn-done-slip">I'll wait — keep my streak</button>
       </div>
     </div>
 
   </main><!-- /card -->
 </div><!-- /shell -->
+
 <nav class="bottom-nav" aria-label="Primary navigation">
-  <a class="tab active" href="index.html" aria-current="page"><span class="tab-label">Check-In</span></a>
-  <a class="tab tab-sos" href="sos.html" aria-label="Craving SOS — get support now"><span class="tab-label">SOS</span></a>
-  <a class="tab" href="streak.html"><span class="tab-label">Streak</span></a>
+  <a class="tab active" href="index.html" aria-current="page">
+    <span class="tab-icon" aria-hidden="true">○</span>
+    <span class="tab-label">Check-In</span>
+  </a>
+  <a class="tab tab-sos" href="sos.html" aria-label="Craving SOS — get support now">
+    <span class="tab-label">SOS</span>
+  </a>
+  <a class="tab" href="streak.html">
+    <span class="tab-icon" aria-hidden="true">✦</span>
+    <span class="tab-label">Streak</span>
+  </a>
 </nav>
 
 <script>
+  // ── Dev controls via query param ───────────────────────
+  if (location.search.includes('dev=1')) {
+    document.getElementById('dev-controls').classList.add('visible');
+  }
+
   // ── State ──────────────────────────────────────────────
   const state = {
     mood: null,
@@ -565,10 +760,10 @@
 
   const moodMeta = {
     rough: { emoji: '😔', label: 'rough' },
-    tough: { emoji: '😤', label: 'tough' },
+    tough: { emoji: '🥺', label: 'tough' },
     okay:  { emoji: '😐', label: 'okay'  },
     good:  { emoji: '🙂', label: 'good'  },
-    great: { emoji: '😊', label: 'great' }
+    great: { emoji: '😌', label: 'great' }
   };
 
   const streakMeta = {
@@ -614,44 +809,35 @@
     }
   };
 
-  // ── Date ───────────────────────────────────────────────
-  const dateEl = document.getElementById('today-date');
-  dateEl.textContent = new Date().toLocaleDateString('en-US', {
+  // ── Date / greeting ────────────────────────────────────
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US', {
     weekday: 'short', month: 'short', day: 'numeric'
   });
 
-  const greetingLine = document.getElementById('greeting-line');
   (function setGreeting() {
     const h = new Date().getHours();
-    if (h < 12) greetingLine.textContent = 'Good morning,';
-    else if (h < 17) greetingLine.textContent = 'Good afternoon,';
-    else greetingLine.textContent = 'Good evening,';
+    const el = document.getElementById('greeting-line');
+    if (h < 12) el.textContent = 'Good morning,';
+    else if (h < 17) el.textContent = 'Good afternoon,';
+    else el.textContent = 'Good evening,';
   })();
 
   const streakSelect = document.getElementById('streak-select');
-  const topbarStreak = document.getElementById('topbar-streak');
-  const streakToneNote = document.getElementById('streak-tone-note');
-  const step1Sub = document.getElementById('step1-sub');
-  const milestoneBadge = document.getElementById('milestone-badge');
-  const completeStreak = document.getElementById('complete-streak');
-  const completeStreakLabel = document.getElementById('complete-streak-label');
-  const completeToneMessage = document.getElementById('complete-tone-message');
 
   function renderStreakState(day) {
     const d = Number(day);
     const meta = streakMeta[d] || streakMeta[47];
     state.currentStreak = d;
-
-    topbarStreak.textContent = `${meta.topbarIcon} Day ${d}`;
-    streakToneNote.textContent = meta.toneNote;
-    step1Sub.textContent = meta.step1Sub;
-    milestoneBadge.textContent = `${meta.badgeIcon} ${meta.badgeText}`;
-    completeStreak.textContent = String(d);
-    completeStreakLabel.textContent = d === 1 ? 'day sober' : 'days sober';
-    completeToneMessage.textContent = meta.completeTone;
+    document.getElementById('topbar-streak').textContent = `${meta.topbarIcon} Day ${d}`;
+    document.getElementById('streak-tone-note').textContent = meta.toneNote;
+    document.getElementById('step1-sub').textContent = meta.step1Sub;
+    document.getElementById('milestone-badge').textContent = `${meta.badgeIcon} ${meta.badgeText}`;
+    document.getElementById('complete-streak').textContent = String(d);
+    document.getElementById('complete-streak-label').textContent = d === 1 ? 'day sober' : 'days sober';
+    document.getElementById('complete-tone-message').textContent = meta.completeTone;
   }
 
-  streakSelect.addEventListener('change', (e) => renderStreakState(e.target.value));
+  streakSelect.addEventListener('change', e => renderStreakState(e.target.value));
   renderStreakState(streakSelect.value);
 
   // ── Progress dots ──────────────────────────────────────
@@ -664,13 +850,11 @@
   }
 
   function setDots(activeIdx) {
-    const dots = dotsEl.querySelectorAll('.dot');
-    dots.forEach((d, i) => {
+    dotsEl.querySelectorAll('.dot').forEach((d, i) => {
       d.className = 'dot' + (i < activeIdx ? ' done' : i === activeIdx ? ' active' : '');
     });
   }
 
-  // ── Navigation ─────────────────────────────────────────
   function showStep(id, dotIdx) {
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -678,20 +862,49 @@
   }
 
   // ── Step 1: Mood ───────────────────────────────────────
-  const moodBtns   = document.querySelectorAll('.mood-chip');
+  const moodBtns    = document.querySelectorAll('.mood-btn');
   const btnMoodNext = document.getElementById('btn-mood-next');
+  const journalWrap = document.getElementById('inline-journal-wrap');
+  const inlineJournal = document.getElementById('inline-journal');
 
-  moodBtns.forEach(btn => {
+  moodBtns.forEach((btn, idx) => {
     btn.addEventListener('click', () => {
-      moodBtns.forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
-      btn.classList.add('selected');
+      moodBtns.forEach(b => {
+        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('aria-checked', 'false');
+      });
       btn.setAttribute('aria-pressed', 'true');
+      btn.setAttribute('aria-checked', 'true');
       state.mood = btn.dataset.mood;
+
+      // Activate Next button
       btnMoodNext.disabled = false;
+      btnMoodNext.removeAttribute('aria-disabled');
+      btnMoodNext.classList.add('ready');
+
+      // Reveal inline journal
+      journalWrap.classList.add('visible');
+      journalWrap.removeAttribute('aria-hidden');
+      inlineJournal.removeAttribute('tabindex');
+    });
+
+    // Keyboard: left/right arrow navigation
+    btn.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = moodBtns[(idx + 1) % moodBtns.length];
+        next.focus();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = moodBtns[(idx - 1 + moodBtns.length) % moodBtns.length];
+        prev.focus();
+      }
     });
   });
 
-  btnMoodNext.addEventListener('click', () => showStep('step-2', 1));
+  btnMoodNext.addEventListener('click', () => {
+    if (!btnMoodNext.disabled) showStep('step-2', 1);
+  });
 
   document.getElementById('btn-mood-skip').addEventListener('click', () => {
     state.mood = null;
@@ -703,7 +916,6 @@
     state.sober = true;
     showStep('step-3a', 2);
   });
-
   document.getElementById('btn-slip').addEventListener('click', () => {
     state.sober = false;
     showStep('step-3b', 2);
@@ -722,7 +934,6 @@
   document.getElementById('btn-journal-skip').addEventListener('click', () => finishSober());
 
   function finishSober() {
-    // Populate summary
     const mm = moodMeta[state.mood];
     if (mm) {
       document.getElementById('summary-mood-emoji').textContent = mm.emoji;
@@ -747,16 +958,13 @@
   document.getElementById('btn-slip-done').addEventListener('click', () => showStep('step-4b', 3));
   document.getElementById('btn-slip-skip').addEventListener('click', () => showStep('step-4b', 3));
 
-  // ── Step 4a: Done ──────────────────────────────────────
+  // ── Step 4a / 4b: Done ────────────────────────────────
   document.getElementById('btn-done-sober').addEventListener('click', () => {
     alert('Check-in saved. See you tomorrow. 🌿');
   });
-
-  // ── Step 4b: Slip done ─────────────────────────────────
   document.getElementById('btn-done-slip').addEventListener('click', () => {
     alert('Check-in saved. One hour at a time. 🫂');
   });
-
   document.getElementById('btn-reset-streak').addEventListener('click', () => {
     if (confirm('Reset your streak to Day 0? This is a fresh start — not a failure.')) {
       alert('Streak reset. Day 1 starts when you\'re ready. 🌱');

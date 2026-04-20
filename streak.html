@@ -4,10 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Streak Tracking — Recovery App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="theme.css" />
   <style>
     .shell {
-      padding: 18px 18px 0;
+      padding: 24px 16px 0;
       gap: 14px;
     }
 
@@ -15,49 +18,83 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
     }
     .top-title {
-      font-size: 13px;
-      color: var(--text-lt);
+      font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-500);
     }
 
     .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 24px;
     }
 
+    /* ── Hero streak card ──────────────────────────────── */
     .hero-label {
-      font-size: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 10px;
+      color: var(--ink-500);
+      margin-bottom: 8px;
     }
     .hero-day {
-      font-size: 52px;
-      font-weight: 800;
+      font-family: 'Fraunces', serif;
+      font-size: 108px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
       line-height: 1;
-      color: var(--primary);
+      color: var(--sage-700);
+      margin-bottom: 8px;
+    }
+
+    /* Progress bar to next milestone */
+    .progress-bar-wrap {
+      margin: 4px 0 16px;
+    }
+    .progress-bar-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-300);
       margin-bottom: 6px;
     }
+    .progress-bar-track {
+      height: 6px;
+      background: var(--sage-50);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--sage-700);
+      border-radius: var(--radius-pill);
+      transition: width 0.6s var(--ease);
+    }
+
     .hero-copy {
-      font-size: 15px;
+      font-size: 16px;
       line-height: 1.65;
-      color: var(--text-lt);
+      color: var(--ink-700);
     }
 
+    /* ── Section heading ───────────────────────────────── */
     .section-title {
-      font-size: 18px;
-      margin-bottom: 10px;
-      color: var(--text);
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--ink-900);
+      margin-bottom: 14px;
     }
 
+    /* ── Milestones ────────────────────────────────────── */
     .milestones {
       display: grid;
       gap: 8px;
@@ -67,24 +104,58 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid #E3ECEC;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 14px;
-      color: var(--text-lt);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 15px;
+      color: var(--ink-500);
+      background: var(--surface-2);
     }
-    .milestone strong { color: var(--text); }
+    .milestone strong { color: var(--ink-900); font-weight: 600; }
     .milestone.done {
-      background: #EEF5F5;
-      border-color: #D5E7E7;
-      color: #365858;
+      background: var(--sage-50);
+      color: var(--sage-700);
+    }
+    .milestone.done strong { color: var(--sage-700); }
+    .milestone.done::after {
+      content: '✓';
+      font-weight: 700;
+      color: var(--sage-700);
     }
 
+    /* ── Start date (collapsed) ────────────────────────── */
+    .edit-date-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-500);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .edit-date-link:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+      border-radius: 3px;
+    }
+    .date-panel {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.35s var(--ease), opacity 0.3s var(--ease);
+    }
+    .date-panel.open {
+      max-height: 200px;
+      opacity: 1;
+    }
+    .date-panel-inner { padding-top: 16px; }
     .date-wrap label {
       display: block;
       font-size: 13px;
-      font-weight: 700;
-      color: var(--text-lt);
+      font-weight: 600;
+      color: var(--ink-700);
       margin-bottom: 8px;
     }
     .date-row {
@@ -94,66 +165,71 @@
     }
     input[type="date"] {
       flex: 1;
-      border: 1.5px solid #D9E6E6;
-      border-radius: 10px;
+      border: 1.5px solid var(--sage-100);
+      border-radius: var(--radius-sm);
       padding: 11px 12px;
       font-size: 14px;
-      color: var(--text);
+      color: var(--ink-900);
       font-family: inherit;
-      background: #fff;
+      background: var(--surface);
+      min-height: 44px;
     }
     input[type="date"]:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
     .btn-soft {
-      border: 1px solid #DCE8E8;
-      border-radius: 10px;
-      background: #F0F5F5;
-      color: #355757;
+      border: 1px solid var(--sage-100);
+      border-radius: var(--radius-sm);
+      background: var(--sage-50);
+      color: var(--sage-700);
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 600;
       font-family: inherit;
-      padding: 11px 12px;
+      padding: 11px 14px;
       cursor: pointer;
+      min-height: 44px;
     }
+    .btn-soft:hover { background: var(--sage-100); }
     .btn-soft:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
-
     .date-note {
       margin-top: 8px;
       font-size: 13px;
-      color: var(--text-lt);
+      color: var(--ink-500);
       line-height: 1.55;
     }
 
+    /* ── Reset card ────────────────────────────────────── */
     .reset-card {
-      border: 1px solid #F3D9D7;
-      background: #FFF1F0;
+      border: 1.5px solid var(--alert-200);
+      background: #fff9f8;
     }
     .reset-card p {
-      font-size: 14px;
-      color: #6F4542;
+      font-size: 15px;
+      color: var(--ink-700);
       line-height: 1.6;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .btn-reset {
       width: 100%;
-      border: 1px solid #E6B9B6;
-      border-radius: 10px;
-      background: #FFF6F5;
-      color: #9C524C;
-      font-size: 14px;
-      font-weight: 700;
+      border: 1.5px solid #e0aea8;
+      border-radius: var(--radius-md);
+      background: var(--alert-200);
+      color: var(--alert-600);
+      font-size: 15px;
+      font-weight: 600;
       font-family: inherit;
-      padding: 12px;
+      padding: 13px;
       cursor: pointer;
+      min-height: 44px;
     }
+    .btn-reset:hover { background: #f0c8c2; }
     .btn-reset:focus-visible {
       outline: none;
-      box-shadow: var(--focus-ring);
+      box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--alert-600);
     }
   </style>
 </head>
@@ -161,42 +237,64 @@
   <a class="skip-link" href="#streak-main">Skip to content</a>
   <main class="shell" id="streak-main" tabindex="-1">
     <div class="top">
-      <span class="top-title">Streak Tracking</span>
+      <span class="top-title">Streak</span>
     </div>
 
-    <section class="card">
-      <p class="hero-label">Current streak</p>
+    <!-- Hero -->
+    <section class="card" aria-labelledby="streak-heading">
+      <p class="hero-label" id="streak-heading">Current streak</p>
       <div class="hero-day"><span id="current-day">47</span></div>
+
+      <div class="progress-bar-wrap" aria-hidden="true">
+        <div class="progress-bar-meta">
+          <span id="progress-from-label">Day 47</span>
+          <span id="progress-to-label">Next: Day 90</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar-fill" style="width:52%"></div>
+        </div>
+      </div>
+
       <p class="hero-copy" id="hero-copy">
         You are building trust with yourself one day at a time. This progress matters.
       </p>
     </section>
 
-    <section class="card">
-      <h2 class="section-title">Milestones</h2>
+    <!-- Milestones -->
+    <section class="card" aria-labelledby="milestones-heading">
+      <h2 class="section-title" id="milestones-heading">Milestones</h2>
       <ul class="milestones" id="milestone-list">
-        <li class="milestone"><strong>Day 1</strong> <span>First brave step</span></li>
-        <li class="milestone"><strong>Day 7</strong> <span>One full week</span></li>
-        <li class="milestone"><strong>Day 30</strong> <span>One month strong</span></li>
-        <li class="milestone"><strong>Day 90</strong> <span>Deep momentum</span></li>
+        <li class="milestone"><strong>Day 1</strong>   <span>First brave step</span></li>
+        <li class="milestone"><strong>Day 7</strong>   <span>One full week</span></li>
+        <li class="milestone"><strong>Day 30</strong>  <span>One month strong</span></li>
+        <li class="milestone"><strong>Day 90</strong>  <span>Deep momentum</span></li>
         <li class="milestone"><strong>Day 365</strong> <span>One full year</span></li>
       </ul>
     </section>
 
-    <section class="card date-wrap">
-      <h2 class="section-title">Sobriety start date</h2>
-      <label for="start-date">Track from this date</label>
-      <div class="date-row">
-        <input id="start-date" type="date" value="" />
-        <button id="apply-date" class="btn-soft" type="button">Update</button>
+    <!-- Start date (collapsed by default) -->
+    <section class="card date-wrap" aria-labelledby="date-section-heading">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <h2 class="section-title" id="date-section-heading" style="margin-bottom:0">Sobriety start date</h2>
+        <button class="edit-date-link" id="edit-date-btn" aria-expanded="false" aria-controls="date-panel">Edit start date</button>
       </div>
-      <p class="date-note" id="date-note">
-        Your streak is currently shown as Day 47 for this prototype preview.
-      </p>
+      <div class="date-panel" id="date-panel" aria-hidden="true">
+        <div class="date-panel-inner">
+          <label for="start-date">Track from this date</label>
+          <div class="date-row">
+            <input id="start-date" type="date" value="" aria-label="Sobriety start date" />
+            <button id="apply-date" class="btn-soft" type="button">Update</button>
+          </div>
+          <p class="date-note" id="date-note">
+            Your streak is currently shown as Day 47 for this prototype preview.
+          </p>
+        </div>
+      </div>
     </section>
 
-    <section class="card reset-card">
-      <h2 class="section-title">Need to reset your streak?</h2>
+    <!-- Reset -->
+    <section class="card reset-card" aria-labelledby="reset-heading">
+      <h2 class="section-title" id="reset-heading">Need to reset your streak?</h2>
       <p>
         If you had a slip, you are not starting over as a person. You are starting your next day with honesty.
       </p>
@@ -205,76 +303,128 @@
   </main>
 
   <nav class="bottom-nav" aria-label="Primary navigation">
-    <a class="tab" href="index.html"><span class="tab-label">Check-In</span></a>
-    <a class="tab tab-sos" href="sos.html" aria-label="Craving SOS — get support now"><span class="tab-label">SOS</span></a>
-    <a class="tab active" href="streak.html" aria-current="page"><span class="tab-label">Streak</span></a>
+    <a class="tab" href="index.html">
+      <span class="tab-icon" aria-hidden="true">○</span>
+      <span class="tab-label">Check-In</span>
+    </a>
+    <a class="tab tab-sos" href="sos.html" aria-label="Craving SOS — get support now">
+      <span class="tab-label">SOS</span>
+    </a>
+    <a class="tab active" href="streak.html" aria-current="page">
+      <span class="tab-icon" aria-hidden="true">✦</span>
+      <span class="tab-label">Streak</span>
+    </a>
   </nav>
 
   <script>
     const selectedDateInput = document.getElementById('start-date');
-    const applyDateBtn = document.getElementById('apply-date');
-    const currentDayEl = document.getElementById('current-day');
-    const milestoneItems = document.querySelectorAll('#milestone-list .milestone');
-    const heroCopyEl = document.getElementById('hero-copy');
-    const dateNoteEl = document.getElementById('date-note');
+    const applyDateBtn      = document.getElementById('apply-date');
+    const currentDayEl      = document.getElementById('current-day');
+    const milestoneItems    = document.querySelectorAll('#milestone-list .milestone');
+    const heroCopyEl        = document.getElementById('hero-copy');
+    const dateNoteEl        = document.getElementById('date-note');
+    const progressFill      = document.getElementById('progress-bar-fill');
+    const progressFrom      = document.getElementById('progress-from-label');
+    const progressTo        = document.getElementById('progress-to-label');
 
     const milestoneDays = [1, 7, 30, 90, 365];
     const heroTone = {
-      1: 'Day 1 counts. A gentle start is still a powerful start.',
-      7: 'One week in. Keep taking this one day at a time.',
-      30: 'Thirty days is meaningful progress. You are doing hard things.',
-      90: 'Ninety days shows deep commitment and real momentum.',
+      1:   'Day 1 counts. A gentle start is still a powerful start.',
+      7:   'One week in. Keep taking this one day at a time.',
+      30:  'Thirty days is meaningful progress. You are doing hard things.',
+      90:  'Ninety days shows deep commitment and real momentum.',
       365: 'A full year. This is huge, and you earned every single day.'
     };
 
-    function calcDayFromDate(dateString) {
-      const start = new Date(dateString + 'T00:00:00');
-      const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const diffMs = today - start;
-      const days = Math.floor(diffMs / 86400000) + 1;
-      return Math.max(days, 1);
+    function getNextMilestone(day) {
+      return milestoneDays.find(m => m > day) || null;
+    }
+    function getPrevMilestone(day) {
+      const passed = milestoneDays.filter(m => m <= day);
+      return passed.length ? passed[passed.length - 1] : 0;
     }
 
     function renderStreak(day) {
       currentDayEl.textContent = String(day);
+
       milestoneItems.forEach((item, idx) => {
-        const mDay = milestoneDays[idx];
-        item.classList.toggle('done', day >= mDay);
+        item.classList.toggle('done', day >= milestoneDays[idx]);
       });
 
-      if (day >= 365) {
-        heroCopyEl.textContent = heroTone[365];
-      } else if (day >= 90) {
-        heroCopyEl.textContent = heroTone[90];
-      } else if (day >= 30) {
-        heroCopyEl.textContent = heroTone[30];
-      } else if (day >= 7) {
-        heroCopyEl.textContent = heroTone[7];
+      if (day >= 365)      heroCopyEl.textContent = heroTone[365];
+      else if (day >= 90)  heroCopyEl.textContent = heroTone[90];
+      else if (day >= 30)  heroCopyEl.textContent = heroTone[30];
+      else if (day >= 7)   heroCopyEl.textContent = heroTone[7];
+      else                 heroCopyEl.textContent = heroTone[1];
+
+      // Progress bar
+      const next = getNextMilestone(day);
+      const prev = getPrevMilestone(day);
+      if (next) {
+        const pct = Math.round(((day - prev) / (next - prev)) * 100);
+        progressFill.style.width = pct + '%';
+        progressFrom.textContent = `Day ${day}`;
+        progressTo.textContent = `Next: Day ${next}`;
       } else {
-        heroCopyEl.textContent = heroTone[1];
+        progressFill.style.width = '100%';
+        progressFrom.textContent = `Day ${day}`;
+        progressTo.textContent = '🎉 All milestones reached';
       }
     }
+
+    // Count-up animation on load (once per session)
+    function animateCount(target) {
+      if (sessionStorage.getItem('streak-counted')) {
+        currentDayEl.textContent = String(target);
+        return;
+      }
+      sessionStorage.setItem('streak-counted', '1');
+      const duration = 800;
+      const start = performance.now();
+      function tick(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        currentDayEl.textContent = String(Math.round(eased * target));
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // Edit start date toggle
+    const editBtn   = document.getElementById('edit-date-btn');
+    const datePanel = document.getElementById('date-panel');
+
+    editBtn.addEventListener('click', () => {
+      const isOpen = datePanel.classList.toggle('open');
+      editBtn.setAttribute('aria-expanded', String(isOpen));
+      datePanel.setAttribute('aria-hidden', String(!isOpen));
+    });
 
     applyDateBtn.addEventListener('click', () => {
       if (!selectedDateInput.value) {
         dateNoteEl.textContent = 'Pick a start date first, then tap Update.';
         return;
       }
-      const calculatedDay = calcDayFromDate(selectedDateInput.value);
-      renderStreak(calculatedDay);
-      dateNoteEl.textContent = `Tracking from ${selectedDateInput.value}. Currently Day ${calculatedDay}.`;
+      const start = new Date(selectedDateInput.value + 'T00:00:00');
+      const today = new Date();
+      const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const days = Math.max(Math.floor((todayMidnight - start) / 86400000) + 1, 1);
+      renderStreak(days);
+      animateCount(days);
+      dateNoteEl.textContent = `Tracking from ${selectedDateInput.value}. Currently Day ${days}.`;
     });
 
     document.getElementById('reset-btn').addEventListener('click', () => {
       if (confirm('Reset your streak to Day 1? This is a fresh start, not a failure.')) {
         renderStreak(1);
+        animateCount(1);
         selectedDateInput.value = '';
         dateNoteEl.textContent = 'Streak reset with care. Day 1 starts now.';
       }
     });
 
     renderStreak(47);
+    animateCount(47);
   </script>
 </body>
 </html>
