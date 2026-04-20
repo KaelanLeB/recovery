@@ -4,102 +4,89 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Daily Check-In — Recovery App</title>
+  <link rel="stylesheet" href="theme.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Check-in page — layout + flow only (tokens in theme.css) */
 
-    :root {
-      --bg:         #F4F7F8;
-      --card:       #FFFFFF;
-      --primary:    #3D6B6B;
-      --primary-dk: #2C5050;
-      --accent:     #E8A87C;
-      --accent-lt:  #FDF0E6;
-      --muted:      #8A9BA8;
-      --text:       #2D3A3A;
-      --text-lt:    #5C6E6E;
-      --danger-lt:  #FFF0F0;
-      --danger:     #C0605A;
-      --radius:     16px;
-      --shadow:     0 6px 24px rgba(30, 54, 54, 0.12);
+    /* ── Hero (greeting + streak summary) ─────────────── */
+    .hero-panel {
+      padding: 18px 20px 12px;
     }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: radial-gradient(circle at top, #F9FCFC, var(--bg));
-      color: var(--text);
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 0;
+    .hero-greeting {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-lt);
+      margin-bottom: 12px;
     }
-
-    /* ── Shell ─────────────────────────────────────────── */
-    .shell {
-      width: 100%;
-      max-width: 430px;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      padding: 0 0 92px;
+    .hero-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px 20px 16px;
+      border: 1px solid rgba(180, 210, 207, 0.35);
     }
-
-    /* ── Top bar ────────────────────────────────────────── */
-    .topbar {
+    .hero-streak-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 24px 8px;
+      gap: 12px;
+      margin-bottom: 8px;
     }
-    .top-actions {
-      display: flex;
-      gap: 8px;
-      padding: 4px 24px 0;
-    }
-    .top-link {
-      display: inline-block;
-      text-decoration: none;
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-size: 13px;
+    .hero-streak-pill {
+      font-size: 14px;
       font-weight: 700;
-    }
-    .top-link-streak {
-      background: #EEF5F5;
       color: var(--primary);
-      border: 1px solid #D6E6E6;
-    }
-    .topbar-streak {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--primary);
-      background: #E4F0F0;
-      border-radius: 20px;
-      padding: 5px 12px;
+      background: var(--primary-soft);
+      border: 1px solid var(--primary-border);
+      border-radius: 999px;
+      padding: 8px 14px;
       letter-spacing: 0.01em;
     }
-    .topbar-date {
+    .hero-date {
       font-size: 13px;
       color: var(--muted);
+      font-weight: 600;
     }
-    .streak-tester {
-      margin: 6px 24px 0;
-      background: #ffffffd9;
-      border: 1px solid #E4ECEC;
-      border-radius: 12px;
-      padding: 10px 12px;
+    .hero-sub {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-lt);
     }
-    .streak-tester label {
-      display: block;
+
+    .proto-details {
+      margin: 12px 20px 0;
+      border: 1px dashed rgba(107, 127, 135, 0.45);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.65);
+      padding: 0 12px;
+    }
+    .proto-details summary {
+      cursor: pointer;
       font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 10px 0;
+      list-style: none;
+      border-radius: var(--radius-sm);
+    }
+    .proto-details summary:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .proto-details summary::-webkit-details-marker { display: none; }
+    .proto-details .streak-tester-inner {
+      padding-bottom: 12px;
+    }
+    .proto-details label {
+      display: block;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 6px;
     }
-    .streak-tester select {
+    .proto-details select {
       width: 100%;
       border: 1.5px solid #D8E4E4;
       border-radius: 10px;
@@ -108,38 +95,6 @@
       color: var(--text);
       font-family: inherit;
       padding: 10px 12px;
-    }
-    .streak-tone-note {
-      font-size: 12px;
-      line-height: 1.45;
-      color: var(--text-lt);
-      margin-top: 8px;
-    }
-    .sos-link-wrap {
-      padding: 8px 24px 0;
-    }
-    .sos-link {
-      display: block;
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      background: #C0605A;
-      color: #fff;
-      text-align: center;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 15px;
-      letter-spacing: 0.01em;
-      padding: 12px 14px;
-    }
-    .sos-link:hover { background: #AF554F; }
-    .sos-link:focus-visible {
-      outline: 3px solid var(--primary);
-      outline-offset: 2px;
-    }
-    .top-link:focus-visible {
-      outline: 3px solid var(--primary);
-      outline-offset: 2px;
     }
 
     /* ── Progress dots ──────────────────────────────────── */
@@ -201,38 +156,39 @@
       margin-bottom: 28px;
     }
 
-    /* ── Mood grid ──────────────────────────────────────── */
-    .mood-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
+    /* ── Mood chips (pill picks) ─────────────────────────── */
+    .mood-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 28px;
     }
-    .mood-btn {
-      background: none;
-      border: 2px solid #E8EEEE;
-      border-radius: 12px;
-      padding: 10px 4px 8px;
+    .mood-chip {
+      background: var(--surface);
+      border: 2px solid #E2EEEE;
+      border-radius: 999px;
+      padding: 11px 16px 10px;
       cursor: pointer;
-      display: flex;
-      flex-direction: column;
+      display: inline-flex;
+      flex-direction: row;
       align-items: center;
-      gap: 5px;
-      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      gap: 8px;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s, box-shadow 0.2s;
       -webkit-tap-highlight-color: transparent;
+      font-family: inherit;
     }
-    .mood-btn:focus-visible {
-      outline: 3px solid var(--primary);
-      outline-offset: 2px;
+    .mood-chip:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
-    .mood-btn .emoji { font-size: 26px; line-height: 1; }
-    .mood-btn .label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
-    .mood-btn.selected {
+    .mood-chip .emoji { font-size: 22px; line-height: 1; }
+    .mood-chip .label { font-size: 14px; font-weight: 600; color: var(--text-lt); letter-spacing: 0.02em; }
+    .mood-chip.selected {
       border-color: var(--primary);
-      background: #EEF5F5;
-      transform: scale(1.06);
+      background: var(--primary-soft);
+      box-shadow: 0 2px 12px rgba(20, 110, 105, 0.12);
     }
-    .mood-btn.selected .label { color: var(--primary); }
+    .mood-chip.selected .label { color: var(--primary-dk); }
 
     /* ── Sober buttons ──────────────────────────────────── */
     .sober-options {
@@ -254,7 +210,10 @@
       letter-spacing: 0.01em;
     }
     .btn-sober:active { transform: scale(0.97); }
-    .btn-sober:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    .btn-sober:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
     .btn-yes {
       background: var(--primary);
       color: #fff;
@@ -295,6 +254,9 @@
       border-color: var(--primary);
       background: #fff;
     }
+    textarea:focus-visible {
+      box-shadow: var(--focus-ring);
+    }
     textarea::placeholder { color: #B0C0C0; }
     .char-count {
       font-size: 12px;
@@ -333,7 +295,10 @@
     }
     .btn-primary:hover  { background: var(--primary-dk); }
     .btn-primary:active { transform: scale(0.97); }
-    .btn-primary:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+    .btn-primary:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .btn-skip {
@@ -347,7 +312,11 @@
       text-decoration: underline;
       text-underline-offset: 3px;
     }
-    .btn-skip:focus-visible { outline: 2px solid var(--primary); border-radius: 4px; }
+    .btn-skip:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+      border-radius: 4px;
+    }
 
     /* ── Complete screen ────────────────────────────────── */
     .complete-icon {
@@ -365,7 +334,7 @@
       padding: 6px 14px;
       font-size: 13px;
       font-weight: 700;
-      color: #B06820;
+      color: var(--accent-text);
       margin-bottom: 24px;
     }
     .complete-streak {
@@ -400,100 +369,66 @@
 
     /* ── Spacer ─────────────────────────────────────────── */
     .spacer { flex: 1; }
-
-    .bottom-nav {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 0;
-      width: 100%;
-      max-width: 430px;
-      background: #FFFFFFF0;
-      backdrop-filter: blur(8px);
-      border-top: 1px solid #DFEAEA;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-      gap: 8px;
-    }
-    .tab {
-      text-decoration: none;
-      color: var(--text-lt);
-      font-size: 12px;
-      font-weight: 700;
-      text-align: center;
-      border-radius: 10px;
-      padding: 10px 6px;
-      border: 1px solid transparent;
-    }
-    .tab.active {
-      color: var(--primary);
-      background: #EEF5F5;
-      border-color: #D6E6E6;
-    }
-    .tab:focus-visible {
-      outline: 3px solid var(--primary);
-      outline-offset: 2px;
-    }
   </style>
 </head>
 <body>
+<a class="skip-link" href="#check-in-main">Skip to check-in</a>
 <div class="shell">
 
-  <!-- Top bar -->
-  <div class="topbar">
-    <span class="topbar-streak" id="topbar-streak">🌿 Day 47</span>
-    <span class="topbar-date" id="today-date"></span>
-  </div>
-  <div class="top-actions">
-    <a class="top-link top-link-streak" href="streak.html">View streak</a>
-  </div>
-  <div class="streak-tester">
-    <label for="streak-select">Prototype streak state</label>
-    <select id="streak-select" aria-label="Select streak day for prototype">
-      <option value="1">Day 1</option>
-      <option value="7">Day 7</option>
-      <option value="30">Day 30</option>
-      <option value="47" selected>Day 47</option>
-      <option value="365">Day 365</option>
-    </select>
-    <p class="streak-tone-note" id="streak-tone-note">
-      Steady momentum. You are showing up and building trust with yourself.
-    </p>
-  </div>
-  <div class="sos-link-wrap">
-    <a class="sos-link" href="sos.html" aria-label="Open Craving SOS">
-      Craving SOS - I need support now
-    </a>
-  </div>
+  <header class="hero-panel" aria-label="Today">
+    <p class="hero-greeting" id="greeting-line">Hi there,</p>
+    <div class="hero-card">
+      <div class="hero-streak-row">
+        <span class="hero-streak-pill" id="topbar-streak">🌿 Day 47</span>
+        <span class="hero-date" id="today-date"></span>
+      </div>
+      <p class="hero-sub" id="streak-tone-note">
+        Steady momentum. You are showing up and building trust with yourself.
+      </p>
+    </div>
+  </header>
+
+  <details class="proto-details">
+    <summary>Prototype: streak preview</summary>
+    <div class="streak-tester-inner">
+      <label for="streak-select">Streak state</label>
+      <select id="streak-select" aria-label="Select streak day for prototype">
+        <option value="1">Day 1</option>
+        <option value="7">Day 7</option>
+        <option value="30">Day 30</option>
+        <option value="47" selected>Day 47</option>
+        <option value="365">Day 365</option>
+      </select>
+    </div>
+  </details>
 
   <!-- Progress dots -->
   <div class="progress" id="progress-dots" aria-hidden="true"></div>
 
   <!-- Card -->
-  <div class="card">
+  <main class="card" id="check-in-main">
 
     <!-- ── Step 1: Mood ─────────────────────────────────── -->
-    <div class="step active" id="step-1" role="main">
+    <div class="step active" id="step-1">
       <p class="eyebrow">Daily Check-In</p>
       <h1>Hey. How are you feeling today?</h1>
       <p class="sub" id="step1-sub">No right or wrong answer — just check in with yourself.</p>
 
-      <div class="mood-grid" role="group" aria-label="Select your mood">
-        <button class="mood-btn" data-mood="rough"    aria-pressed="false">
-          <span class="emoji">😔</span><span class="label">Rough</span>
+      <div class="mood-chip-row" role="group" aria-label="Select your mood">
+        <button type="button" class="mood-chip" data-mood="rough" aria-pressed="false">
+          <span class="emoji" aria-hidden="true">😔</span><span class="label">Rough</span>
         </button>
-        <button class="mood-btn" data-mood="tough"    aria-pressed="false">
-          <span class="emoji">😤</span><span class="label">Tough</span>
+        <button type="button" class="mood-chip" data-mood="tough" aria-pressed="false">
+          <span class="emoji" aria-hidden="true">😤</span><span class="label">Tough</span>
         </button>
-        <button class="mood-btn" data-mood="okay"     aria-pressed="false">
-          <span class="emoji">😐</span><span class="label">Okay</span>
+        <button type="button" class="mood-chip" data-mood="okay" aria-pressed="false">
+          <span class="emoji" aria-hidden="true">😐</span><span class="label">Okay</span>
         </button>
-        <button class="mood-btn" data-mood="good"     aria-pressed="false">
-          <span class="emoji">🙂</span><span class="label">Good</span>
+        <button type="button" class="mood-chip" data-mood="good" aria-pressed="false">
+          <span class="emoji" aria-hidden="true">🙂</span><span class="label">Good</span>
         </button>
-        <button class="mood-btn" data-mood="great"    aria-pressed="false">
-          <span class="emoji">😊</span><span class="label">Great</span>
+        <button type="button" class="mood-chip" data-mood="great" aria-pressed="false">
+          <span class="emoji" aria-hidden="true">😊</span><span class="label">Great</span>
         </button>
       </div>
 
@@ -611,12 +546,12 @@
       </div>
     </div>
 
-  </div><!-- /card -->
+  </main><!-- /card -->
 </div><!-- /shell -->
 <nav class="bottom-nav" aria-label="Primary navigation">
-  <a class="tab active" href="index.html" aria-current="page">Check-In</a>
-  <a class="tab" href="streak.html">Streak</a>
-  <a class="tab" href="sos.html">SOS</a>
+  <a class="tab active" href="index.html" aria-current="page"><span class="tab-label">Check-In</span></a>
+  <a class="tab tab-sos" href="sos.html" aria-label="Craving SOS — get support now"><span class="tab-label">SOS</span></a>
+  <a class="tab" href="streak.html"><span class="tab-label">Streak</span></a>
 </nav>
 
 <script>
@@ -685,6 +620,14 @@
     weekday: 'short', month: 'short', day: 'numeric'
   });
 
+  const greetingLine = document.getElementById('greeting-line');
+  (function setGreeting() {
+    const h = new Date().getHours();
+    if (h < 12) greetingLine.textContent = 'Good morning,';
+    else if (h < 17) greetingLine.textContent = 'Good afternoon,';
+    else greetingLine.textContent = 'Good evening,';
+  })();
+
   const streakSelect = document.getElementById('streak-select');
   const topbarStreak = document.getElementById('topbar-streak');
   const streakToneNote = document.getElementById('streak-tone-note');
@@ -735,7 +678,7 @@
   }
 
   // ── Step 1: Mood ───────────────────────────────────────
-  const moodBtns   = document.querySelectorAll('.mood-btn');
+  const moodBtns   = document.querySelectorAll('.mood-chip');
   const btnMoodNext = document.getElementById('btn-mood-next');
 
   moodBtns.forEach(btn => {

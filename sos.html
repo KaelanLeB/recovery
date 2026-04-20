@@ -4,92 +4,52 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Craving SOS — Recovery App</title>
+  <link rel="stylesheet" href="theme.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #F4F7F8;
-      --card: #FFFFFF;
-      --text: #2D3A3A;
-      --text-soft: #5E7070;
-      --primary: #3D6B6B;
-      --primary-dark: #2C5050;
-      --soft: #E8F0F0;
-      --accent: #E8A87C;
-      --danger: #C0605A;
-      --radius: 16px;
-      --shadow: 0 6px 24px rgba(30, 54, 54, 0.12);
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: radial-gradient(circle at top, #F9FCFC, var(--bg));
-      color: var(--text);
-      min-height: 100dvh;
-      display: flex;
-      justify-content: center;
-    }
-
     .shell {
-      width: 100%;
-      max-width: 430px;
-      min-height: 100dvh;
-      padding: 18px 18px 96px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      padding: 16px 18px 0;
+      gap: 12px;
     }
 
-    .top {
+    .sos-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      font-size: 13px;
-      color: var(--text-soft);
+      flex-shrink: 0;
     }
 
-    .top a {
+    .sos-back {
       color: var(--primary);
       text-decoration: none;
-      font-weight: 600;
-    }
-    .top-links {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .chip-link {
-      display: inline-block;
-      border-radius: 10px;
-      padding: 8px 10px;
-      font-size: 12px;
       font-weight: 700;
-      text-decoration: none;
-      border: 1px solid #D6E6E6;
-      background: #EEF5F5;
-      color: var(--primary);
+      font-size: 14px;
+      padding: 8px 4px;
+      border-radius: var(--radius-sm);
     }
-    .chip-sos {
-      border-color: #E6B9B6;
-      background: #C0605A;
-      color: #fff;
+    .sos-back:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
-    .top a:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 2px;
-      border-radius: 4px;
+
+    .sos-kicker {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
     }
 
     .card {
       background: var(--card);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 24px 20px 22px;
+      padding: 22px 20px 22px;
+      border: 1px solid rgba(180, 210, 207, 0.35);
     }
 
     .hero h1 {
-      font-size: 27px;
+      font-size: 26px;
       line-height: 1.25;
       margin-bottom: 10px;
       color: var(--text);
@@ -97,25 +57,25 @@
     .hero p {
       font-size: 15px;
       line-height: 1.65;
-      color: var(--text-soft);
+      color: var(--text-lt);
       margin-bottom: 14px;
     }
 
     .instant {
-      background: #EEF5F5;
+      background: var(--primary-soft);
       border-left: 4px solid var(--primary);
-      border-radius: 12px;
+      border-radius: var(--radius-sm);
       padding: 12px 14px;
       font-size: 14px;
       line-height: 1.6;
-      color: #365858;
+      color: var(--text);
     }
 
     .breathing {
       margin-top: 14px;
       text-align: center;
       padding: 18px 14px 16px;
-      border-radius: 14px;
+      border-radius: var(--radius-sm);
       background: linear-gradient(180deg, #F8FCFC 0%, #EFF6F6 100%);
       border: 1px solid #DEEBEB;
     }
@@ -125,7 +85,7 @@
       height: 120px;
       border-radius: 999px;
       margin: 0 auto 12px;
-      background: var(--soft);
+      background: #E8F0F0;
       border: 2px solid #D0E3E3;
       display: grid;
       place-items: center;
@@ -144,7 +104,7 @@
     }
 
     .phase {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       color: var(--primary);
       line-height: 1;
@@ -152,33 +112,35 @@
     }
     .phase-note {
       font-size: 14px;
-      color: var(--text-soft);
+      color: var(--text-lt);
       line-height: 1.55;
       min-height: 44px;
     }
 
+    .sos-section-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      margin: 0 0 8px;
+    }
+
     .grounding {
       margin-top: 14px;
-      border-radius: 12px;
+      border-radius: var(--radius-sm);
       border: 1px solid #E2ECEC;
       padding: 14px;
       background: #FBFDFD;
     }
-    .grounding h2 {
-      font-size: 18px;
-      margin-bottom: 8px;
-      color: var(--text);
-    }
-    .grounding p {
+    .grounding > p:first-of-type {
       font-size: 14px;
-      color: var(--text-soft);
+      color: var(--text-lt);
       line-height: 1.6;
       margin-bottom: 12px;
     }
     .prompt {
       font-size: 17px;
       font-weight: 700;
-      color: #325757;
+      color: var(--primary-dk);
       line-height: 1.45;
       margin-bottom: 12px;
     }
@@ -189,9 +151,10 @@
       gap: 10px;
       margin-top: 14px;
     }
-    button, .action-link {
+    button,
+    .action-link {
       border: none;
-      border-radius: 12px;
+      border-radius: var(--radius-sm);
       width: 100%;
       padding: 14px 12px;
       font-size: 15px;
@@ -204,80 +167,48 @@
       background: var(--primary);
       color: #fff;
     }
-    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-primary:hover {
+      background: var(--primary-dk);
+    }
     .btn-soft {
       background: #F0F5F5;
-      color: #365858;
+      color: var(--primary-dk);
       border: 1px solid #DCE8E8;
       font-weight: 600;
     }
     .action-link {
       text-decoration: none;
-      background: #FFF4ED;
-      color: #9E5F2A;
-      border: 1px solid #F3D3BA;
+      background: var(--accent-lt);
+      color: var(--accent-text);
+      border: 1px solid rgba(212, 146, 106, 0.45);
     }
-    button:focus-visible, .action-link:focus-visible {
-      outline: 3px solid var(--primary);
-      outline-offset: 2px;
+    button:focus-visible,
+    .action-link:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     .footer-note {
       font-size: 12px;
-      color: var(--text-soft);
+      color: var(--text-lt);
       text-align: center;
       line-height: 1.5;
-      margin-top: 2px;
-    }
-
-    .bottom-nav {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 0;
-      width: 100%;
-      max-width: 430px;
-      background: #FFFFFFF0;
-      backdrop-filter: blur(8px);
-      border-top: 1px solid #DFEAEA;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-      gap: 8px;
-    }
-    .tab {
-      text-decoration: none;
-      color: var(--text-soft);
-      font-size: 12px;
-      font-weight: 700;
-      text-align: center;
-      border-radius: 10px;
-      padding: 10px 6px;
-      border: 1px solid transparent;
-    }
-    .tab.active {
-      color: var(--primary);
-      background: #EEF5F5;
-      border-color: #D6E6E6;
-    }
-    .tab:focus-visible, .chip-link:focus-visible {
-      outline: 3px solid var(--primary);
-      outline-offset: 2px;
+      margin-top: 4px;
+      padding: 0 8px 8px;
     }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <div class="top">
-      <span>Craving SOS</span>
-      <div class="top-links">
-        <a class="chip-link" href="streak.html">Streak</a>
-        <a class="chip-link chip-sos" href="sos.html" aria-current="page">SOS active</a>
-      </div>
-    </div>
+  <a class="skip-link" href="#sos-main">Skip to main content</a>
 
-    <section class="card hero" aria-live="polite">
-      <h1>You are safe right now.</h1>
+  <main id="sos-main" class="shell" tabindex="-1">
+    <header class="sos-header">
+      <a class="sos-back" href="index.html">← Check-In</a>
+      <span class="sos-kicker">SOS</span>
+    </header>
+
+    <section class="card hero" aria-labelledby="sos-heading">
+      <h1 id="sos-heading">You are safe right now.</h1>
       <p>
         This feeling can pass. Stay with me for one minute and just follow along.
       </p>
@@ -285,26 +216,33 @@
         Take your feet to the floor. Unclench your jaw. Drop your shoulders.
       </div>
 
-      <div class="breathing" aria-label="Guided breathing">
+      <section
+        class="breathing"
+        aria-live="polite"
+        aria-label="Guided breathing"
+        role="region"
+      >
         <div id="breath-bubble" class="bubble inhale" aria-hidden="true">🌬️</div>
         <div id="phase" class="phase">Breathe in (4)</div>
         <p id="phase-note" class="phase-note">
           Slow inhale through your nose. No need to be perfect.
         </p>
-      </div>
+      </section>
 
-      <div class="grounding">
-        <h2>Grounding prompt</h2>
+      <section class="grounding" aria-labelledby="grounding-title">
+        <h2 id="grounding-title" class="sos-section-title">Grounding prompt</h2>
         <p>When you're ready, do one prompt at a time. Keep it simple.</p>
-        <div class="prompt" id="grounding-prompt">Name 5 things you can see.</div>
-        <button id="next-prompt" class="btn-soft" type="button">Next prompt</button>
-      </div>
+        <p class="prompt" id="grounding-prompt">Name 5 things you can see.</p>
+        <button id="next-prompt" class="btn-soft" type="button">
+          Next prompt
+        </button>
+      </section>
 
       <div class="actions">
         <button class="btn-primary" id="repeat-minute" type="button">
           Repeat 1-minute reset
         </button>
-        <a class="action-link" href="index.html">I am ready to return to check-in</a>
+        <a class="action-link" href="index.html">I’m ready to return to check-in</a>
       </div>
     </section>
 
@@ -312,10 +250,11 @@
       You do not have to solve everything right now. Just get through this moment.
     </p>
   </main>
+
   <nav class="bottom-nav" aria-label="Primary navigation">
-    <a class="tab" href="index.html">Check-In</a>
-    <a class="tab" href="streak.html">Streak</a>
-    <a class="tab active" href="sos.html" aria-current="page">SOS</a>
+    <a class="tab" href="index.html"><span class="tab-label">Check-In</span></a>
+    <a class="tab tab-sos active" href="sos.html" aria-current="page" aria-label="Craving SOS — get support now"><span class="tab-label">SOS</span></a>
+    <a class="tab" href="streak.html"><span class="tab-label">Streak</span></a>
   </nav>
 
   <script>
