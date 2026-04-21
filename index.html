@@ -745,6 +745,11 @@
 </nav>
 
 <script>
+  // ── Onboarding guard ──────────────────────────────────
+  if (localStorage.getItem('onboardingComplete') !== 'true') {
+    window.location.replace('prototypes/onboarding-v1.html');
+  }
+
   // ── Dev controls via query param ───────────────────────
   if (location.search.includes('dev=1')) {
     document.getElementById('dev-controls').classList.add('visible');
@@ -816,10 +821,12 @@
 
   (function setGreeting() {
     const h = new Date().getHours();
+    const name = localStorage.getItem('userName');
+    const suffix = name ? ` ${name}.` : '';
     const el = document.getElementById('greeting-line');
-    if (h < 12) el.textContent = 'Good morning,';
-    else if (h < 17) el.textContent = 'Good afternoon,';
-    else el.textContent = 'Good evening,';
+    if (h < 12) el.textContent = `Good morning,${suffix}`;
+    else if (h < 17) el.textContent = `Good afternoon,${suffix}`;
+    else el.textContent = `Good evening,${suffix}`;
   })();
 
   const streakSelect = document.getElementById('streak-select');
