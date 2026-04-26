@@ -744,10 +744,13 @@
   </a>
 </nav>
 
-<script>
+<script type="module">
+  import { supabase } from './supabase.js';
+
   // ── Onboarding guard ──────────────────────────────────
-  if (localStorage.getItem('onboardingComplete') !== 'true') {
-    window.location.replace('prototypes/onboarding-v1.html');
+  const profileId = localStorage.getItem('profileId');
+  if (!profileId) {
+    window.location.replace('prototypes/onboarding-v2.html');
   }
 
   // ── Dev controls via query param ───────────────────────
@@ -846,6 +849,33 @@
 
   streakSelect.addEventListener('change', e => renderStreakState(e.target.value));
   renderStreakState(streakSelect.value);
+
+  // ── Live data from Supabase ────────────────────────────
+  async function initFromSupabase() {
+    if (!profileId) return;
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('name, sobriety_start_date')
+      .eq('id', profileId)
+      .single();
+    if (error || !profile) return;
+
+    // Update greeting with real name
+    const h = new Date().getHours();
+    const suffix = profile.name ? ` ${profile.name}.` : '';
+    const el = document.getElementById('greeting-line');
+    if (h < 12)       el.textContent = `Good morning,${suffix}`;
+    else if (h < 17)  el.textContent = `Good afternoon,${suffix}`;
+    else              el.textContent = `Good evening,${suffix}`;
+
+    // Calculate real streak and re-render
+    if (profile.sobriety_start_date) {
+      const start = new Date(profile.sobriety_start_date);
+      const diffDays = Math.floor((Date.now() - start.getTime()) / 86400000);
+      renderStreakState(Math.max(0, diffDays));
+    }
+  }
+  initFromSupabase();
 
   // ── Progress dots ──────────────────────────────────────
   const TOTAL_STEPS = 4;
