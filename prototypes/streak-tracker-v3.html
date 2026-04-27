@@ -467,6 +467,21 @@
       box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--alert-600);
     }
 
+    /* ── Reset error ───────────────────────────────────── */
+    .reset-error {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: #fff3f3;
+      border: 1.5px solid #f5c6c6;
+      font-size: 14px;
+      color: #8b2020;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .reset-error.visible { display: block; }
+
     /* ── Loading state ─────────────────────────────────── */
     .loading-pulse {
       animation: pulse 1.4s ease-in-out infinite;
@@ -568,7 +583,7 @@
 
       <!-- Time Reclaimed -->
       <div class="card stat-card">
-        <p class="stat-label">Time Reclaimed</p>
+        <p class="stat-label">Time Regained</p>
         <p class="stat-value" id="time-reclaimed-value">—</p>
         <p class="stat-sub">hours</p>
       </div>
@@ -601,6 +616,7 @@
         If you had a slip, you are not starting over as a person. You are starting your next day with honesty.
       </p>
       <button id="reset-btn" class="btn-reset" type="button">Reset streak with compassion</button>
+      <p class="reset-error" id="reset-error" role="alert" aria-live="assertive"></p>
     </section>
   </main>
 
@@ -1071,7 +1087,9 @@
           .update({ sobriety_start_date: nowISO })
           .eq('id', profileId);
         if (error) {
-          alert('Something went wrong resetting your streak. Please try again.');
+          const resetError = document.getElementById('reset-error');
+          resetError.textContent = 'Something went wrong resetting your streak. Please try again.';
+          resetError.classList.add('visible');
           return;
         }
       }

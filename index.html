@@ -750,7 +750,7 @@
   // ── Onboarding guard ──────────────────────────────────
   const profileId = localStorage.getItem('profileId');
   if (!profileId) {
-    window.location.replace('prototypes/onboarding-v2.html');
+    window.location.replace('onboarding.html');
   }
 
   // ── Dev controls via query param ───────────────────────
@@ -822,15 +822,14 @@
     weekday: 'short', month: 'short', day: 'numeric'
   });
 
-  (function setGreeting() {
+  function setGreeting(name) {
     const h = new Date().getHours();
-    const name = localStorage.getItem('userName');
-    const suffix = name ? ` ${name}.` : '';
+    const suffix = name ? ` ${name}.` : '.';
     const el = document.getElementById('greeting-line');
     if (h < 12) el.textContent = `Good morning,${suffix}`;
     else if (h < 17) el.textContent = `Good afternoon,${suffix}`;
     else el.textContent = `Good evening,${suffix}`;
-  })();
+  }
 
   const streakSelect = document.getElementById('streak-select');
 
@@ -858,15 +857,12 @@
       .select('name, sobriety_start_date')
       .eq('id', profileId)
       .single();
-    if (error || !profile) return;
+    if (error || !profile) {
+      setGreeting();
+      return;
+    }
 
-    // Update greeting with real name
-    const h = new Date().getHours();
-    const suffix = profile.name ? ` ${profile.name}.` : '';
-    const el = document.getElementById('greeting-line');
-    if (h < 12)       el.textContent = `Good morning,${suffix}`;
-    else if (h < 17)  el.textContent = `Good afternoon,${suffix}`;
-    else              el.textContent = `Good evening,${suffix}`;
+    setGreeting(profile.name);
 
     // Calculate real streak and re-render
     if (profile.sobriety_start_date) {
