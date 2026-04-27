@@ -665,7 +665,7 @@
       <h1>Thank you for being honest.</h1>
 
       <div class="compassion-box">
-        Logging a slip takes real courage. It means you're still here, still trying — and that's everything. Day 47 doesn't disappear. Your journey is still yours.
+        Logging a slip takes real courage. It means you're still here, still trying — and that's everything. Every day you've built doesn't disappear. Your journey is still yours.
       </div>
 
       <label class="journal-label" for="journal-slip">Want to add anything? (optional)</label>
@@ -833,9 +833,18 @@
 
   const streakSelect = document.getElementById('streak-select');
 
+  function metaForDay(d) {
+    if (streakMeta[d]) return streakMeta[d];
+    if (d >= 365) return { ...streakMeta[365], badgeText: `Day ${d} — Incredible` };
+    if (d >= 90)  return { ...streakMeta[90],  badgeText: `Day ${d} — Deep momentum` };
+    if (d >= 30)  return { ...streakMeta[30],  badgeText: `Day ${d} — Keep going` };
+    if (d >= 7)   return { ...streakMeta[7],   badgeText: `Day ${d} — Keep going` };
+    return { ...streakMeta[1], badgeText: `Day ${d} — Keep going` };
+  }
+
   function renderStreakState(day) {
     const d = Number(day);
-    const meta = streakMeta[d] || streakMeta[47];
+    const meta = metaForDay(d);
     state.currentStreak = d;
     document.getElementById('topbar-streak').textContent = `${meta.topbarIcon} Day ${d}`;
     document.getElementById('streak-tone-note').textContent = meta.toneNote;
