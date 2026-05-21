@@ -129,3 +129,40 @@ These are product decisions not yet made. Claude Code should flag these when rel
 - When you build a prototype, also produce the companion technical brief
 - Ask me before making major structural decisions not covered in this file
 - Prioritise the three MVP features above all else until instructed otherwise
+
+Competitive UI/UX Patterns (from research)
+The following patterns come from research on the leading apps in this space (I Am Sober, Sunnyside, Reframe, Loosid, Finch, Headspace, Calm, Habitica). They translate the design principles above into specific, borrowable patterns. When designing or modifying any screen, prefer these:
+For the Sobriety Streak Tracker
+
+Day-counter as home-screen hero (I Am Sober pattern). Make the count big, warm, and the first thing users see.
+Reframable resets, never "lost streaks" (industry-wide 2026 shift). Use cumulative-days language alongside current streak ("80 days sober across your journey, 12 in this stretch").
+Milestone celebrations at 1 day, 1 week, 30 days, 90 days, 1 year (I Am Sober) — match the milestones already in your MVP spec.
+Optional growth-collection or nurturing visual (Finch, Habitica) — e.g., a plant or garden that grows alongside the streak. Reframes self-care as caring for something. Avoid loss mechanics.
+
+For Craving SOS
+
+One-tap from anywhere (Calm's "press play" pattern). No menu, no choice — straight into a guided 90-second exercise.
+Bridge the 20-minute craving window. Cravings typically peak and pass within ~20 minutes; the SOS flow's job is to bridge that gap with breathing, grounding, or urge-surfing.
+Calm visual language (Headspace) — rounded shapes, soft pillows, muted warm palette. The SOS screen should look like a deep breath.
+
+For Daily Check-In
+
+Morning pledge + evening reflection bookends (I Am Sober). Two micro-moments, not one big form.
+Conversational tone, not a form (Sunnyside). Short prompts that feel like a friend asking, not a questionnaire.
+Adaptive surface — if the user is steady, surface less. If they missed yesterday, lead with a gentle re-engagement (never a scold).
+
+Onboarding (when we build it)
+
+3-minute anonymous intake, account deferred (Sunnyside). Get the user to value before requiring identity.
+Tone choice during onboarding (warm-companion vs. empowering-coach) — different users in recovery want different relationships with the app.
+
+Future community phase (open question in this file)
+
+Lifestyle-feed depth (Loosid) — community as a core surface, not a side tab.
+Stage-grouped groupings (I Am Sober) — newcomers shouldn't be sitting next to 10-year veterans.
+
+
+Reference
+Full competitive research with rationale, screenshots-by-description, and sources:
+@./docs/recovery-app-uiux-research.md
+When working on a UI/UX change, you can either let CLAUDE.md guide you (above) or invoke /apply-recovery-pattern <component-path> to load the full research and propose concrete changes against a specific component.
