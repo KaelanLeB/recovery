@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="./theme.css" />
   <style>
     .shell {
       padding: 24px 16px 0;
@@ -50,12 +50,61 @@
       letter-spacing: -0.03em;
       line-height: 1;
       color: var(--sage-700);
-      margin-bottom: 8px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Live time counter ─────────────────────────────── */
+    .time-counter {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-bottom: 16px;
+    }
+    .time-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 52px;
+    }
+    .time-digits {
+      font-size: 26px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+      line-height: 1;
+      color: var(--sage-700);
+      opacity: 0.6;
+    }
+    .time-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-300);
+      margin-top: 4px;
+    }
+    .time-sep {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--sage-700);
+      opacity: 0.35;
+      padding: 0 2px;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .streak-note {
+      font-size: 12px;
+      color: var(--ink-300);
+      font-style: italic;
+      margin-top: -10px;
+      margin-bottom: 12px;
+      line-height: 1.5;
     }
 
     /* Progress bar to next milestone */
     .progress-bar-wrap {
-      margin: 4px 0 16px;
+      margin: 0 0 16px;
     }
     .progress-bar-meta {
       display: flex;
@@ -120,6 +169,192 @@
       content: '✓';
       font-weight: 700;
       color: var(--sage-700);
+    }
+
+    /* ── Recovery Timeline ─────────────────────────────── */
+    .timeline-list {
+      display: grid;
+      gap: 8px;
+    }
+    .tl-item {
+      border-radius: var(--radius-md);
+      padding: 14px;
+      background: var(--surface-2);
+    }
+    .tl-item.future {
+      opacity: 0.55;
+    }
+    .tl-item.passed {
+      background: var(--sage-50);
+      opacity: 1;
+    }
+    .tl-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .tl-left {}
+    .tl-label {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink-900);
+      line-height: 1.2;
+    }
+    .tl-item.passed .tl-label { color: var(--sage-700); }
+    .tl-date {
+      font-size: 12px;
+      color: var(--ink-400);
+      margin-top: 3px;
+    }
+    .tl-item.passed .tl-date { color: var(--sage-600); opacity: 0.8; }
+    .tl-badge {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--sage-700);
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+    .tl-badge.upcoming {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-300);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+    .tl-benefits {
+      list-style: none;
+      display: grid;
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+    }
+    .tl-benefits li {
+      font-size: 13px;
+      color: var(--ink-500);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.45;
+    }
+    .tl-benefits li::before {
+      content: '·';
+      position: absolute;
+      left: 0;
+      color: var(--ink-300);
+      font-size: 16px;
+      line-height: 1;
+      top: 1px;
+    }
+    .tl-item.passed .tl-benefits li { color: var(--sage-700); opacity: 0.85; }
+    .tl-item.passed .tl-benefits li::before { color: var(--sage-500); }
+
+    .timeline-placeholder {
+      font-size: 14px;
+      color: var(--ink-400);
+      text-align: center;
+      padding: 16px 0 8px;
+      font-style: italic;
+    }
+
+    /* ── Stats grid ────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat-card {
+      padding: 20px 16px;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-family: 'Fraunces', serif;
+      font-size: 34px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--sage-700);
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+    .stat-sub {
+      font-size: 13px;
+      color: var(--ink-500);
+      line-height: 1.4;
+    }
+    .set-cost-btn {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-500);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      padding: 0;
+    }
+    .set-cost-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+      border-radius: 3px;
+    }
+    .cost-input-wrap {
+      margin-top: 10px;
+      display: none;
+    }
+    .cost-input-wrap.open { display: block; }
+    .cost-input-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .cost-prefix {
+      font-size: 16px;
+      color: var(--ink-500);
+      font-weight: 500;
+    }
+    .cost-input {
+      width: 72px;
+      border: 1.5px solid var(--sage-100);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--ink-900);
+      background: var(--surface);
+      min-height: 40px;
+    }
+    .cost-input:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .btn-cost-save {
+      border: 1px solid var(--sage-100);
+      border-radius: var(--radius-sm);
+      background: var(--sage-50);
+      color: var(--sage-700);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 8px 12px;
+      cursor: pointer;
+      min-height: 40px;
+    }
+    .btn-cost-save:hover { background: var(--sage-100); }
+    .cost-note {
+      font-size: 12px;
+      color: var(--ink-400);
+      margin-top: 6px;
     }
 
     /* ── Start date (collapsed) ────────────────────────── */
@@ -231,6 +466,30 @@
       outline: none;
       box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--alert-600);
     }
+
+    /* ── Reset error ───────────────────────────────────── */
+    .reset-error {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: #fff3f3;
+      border: 1.5px solid #f5c6c6;
+      font-size: 14px;
+      color: #8b2020;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .reset-error.visible { display: block; }
+
+    /* ── Loading state ─────────────────────────────────── */
+    .loading-pulse {
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
   </style>
 </head>
 <body>
@@ -243,15 +502,37 @@
     <!-- Hero -->
     <section class="card" aria-labelledby="streak-heading">
       <p class="hero-label" id="streak-heading">Current streak</p>
-      <div class="hero-day"><span id="current-day">47</span></div>
+      <div class="hero-day"><span id="current-day" class="loading-pulse">—</span></div>
+
+      <!-- Live time counter -->
+      <div class="time-counter" aria-live="off" aria-label="Time elapsed today">
+        <div class="time-unit">
+          <span class="time-digits" id="time-hh">--</span>
+          <span class="time-label">HRS</span>
+        </div>
+        <span class="time-sep" aria-hidden="true">:</span>
+        <div class="time-unit">
+          <span class="time-digits" id="time-mm">--</span>
+          <span class="time-label">MIN</span>
+        </div>
+        <span class="time-sep" aria-hidden="true">:</span>
+        <div class="time-unit">
+          <span class="time-digits" id="time-ss">--</span>
+          <span class="time-label">SEC</span>
+        </div>
+      </div>
+
+      <p class="streak-note" id="streak-note" hidden>
+        Complete onboarding to track your real streak
+      </p>
 
       <div class="progress-bar-wrap" aria-hidden="true">
         <div class="progress-bar-meta">
-          <span id="progress-from-label">Day 47</span>
-          <span id="progress-to-label">Next: Day 90</span>
+          <span id="progress-from-label">—</span>
+          <span id="progress-to-label">—</span>
         </div>
         <div class="progress-bar-track">
-          <div class="progress-bar-fill" id="progress-bar-fill" style="width:52%"></div>
+          <div class="progress-bar-fill" id="progress-bar-fill" style="width:0%"></div>
         </div>
       </div>
 
@@ -272,6 +553,42 @@
       </ul>
     </section>
 
+    <!-- Recovery Timeline -->
+    <section class="card" aria-labelledby="timeline-heading" id="timeline-section">
+      <h2 class="section-title" id="timeline-heading">Recovery Timeline</h2>
+      <div class="timeline-list" id="timeline-list">
+        <p class="timeline-placeholder">Loading your recovery timeline…</p>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="stats-section">
+      <!-- Money Saved -->
+      <div class="card stat-card" id="money-card">
+        <p class="stat-label">Money Saved</p>
+        <p class="stat-value" id="money-value">—</p>
+        <p class="stat-sub" id="money-sub"></p>
+        <button class="set-cost-btn" id="set-cost-btn" type="button" hidden>
+          Set daily cost →
+        </button>
+        <div class="cost-input-wrap" id="cost-input-wrap">
+          <div class="cost-input-row">
+            <span class="cost-prefix">$</span>
+            <input class="cost-input" id="cost-input" type="number" min="0" step="0.01" placeholder="0.00" aria-label="Daily cost in dollars" />
+            <button class="btn-cost-save" id="cost-save-btn" type="button">Save</button>
+          </div>
+          <p class="cost-note" id="cost-note">Your daily spend on this habit</p>
+        </div>
+      </div>
+
+      <!-- Time Reclaimed -->
+      <div class="card stat-card">
+        <p class="stat-label">Time Regained</p>
+        <p class="stat-value" id="time-reclaimed-value">—</p>
+        <p class="stat-sub">hours</p>
+      </div>
+    </div>
+
     <!-- Start date (collapsed by default) -->
     <section class="card date-wrap" aria-labelledby="date-section-heading">
       <div style="display:flex; align-items:center; justify-content:space-between;">
@@ -286,7 +603,7 @@
             <button id="apply-date" class="btn-soft" type="button">Update</button>
           </div>
           <p class="date-note" id="date-note">
-            Your streak is currently shown as Day 47 for this prototype preview.
+            Your streak and timer will update immediately.
           </p>
         </div>
       </div>
@@ -299,36 +616,52 @@
         If you had a slip, you are not starting over as a person. You are starting your next day with honesty.
       </p>
       <button id="reset-btn" class="btn-reset" type="button">Reset streak with compassion</button>
+      <p class="reset-error" id="reset-error" role="alert" aria-live="assertive"></p>
     </section>
   </main>
 
   <nav class="bottom-nav" aria-label="Primary navigation">
-    <a class="tab" href="index.html">
+    <a class="tab" href="./index.html">
       <span class="tab-icon" aria-hidden="true">○</span>
       <span class="tab-label">Check-In</span>
     </a>
-    <a class="tab tab-sos" href="sos.html" aria-label="Craving SOS — get support now">
+    <a class="tab tab-sos" href="./sos.html" aria-label="Craving SOS — get support now">
       <span class="tab-label">SOS</span>
     </a>
-    <a class="tab active" href="streak.html" aria-current="page">
+    <a class="tab active" href="./streak.html" aria-current="page">
       <span class="tab-icon" aria-hidden="true">✦</span>
       <span class="tab-label">Streak</span>
     </a>
   </nav>
 
-  <script>
-    const selectedDateInput = document.getElementById('start-date');
-    const applyDateBtn      = document.getElementById('apply-date');
+  <script type="module">
+    import { supabase } from './supabase.js';
+
+    // ── DOM refs ─────────────────────────────────────────────
     const currentDayEl      = document.getElementById('current-day');
+    const timeHH            = document.getElementById('time-hh');
+    const timeMM            = document.getElementById('time-mm');
+    const timeSS            = document.getElementById('time-ss');
+    const streakNote        = document.getElementById('streak-note');
     const milestoneItems    = document.querySelectorAll('#milestone-list .milestone');
     const heroCopyEl        = document.getElementById('hero-copy');
-    const dateNoteEl        = document.getElementById('date-note');
     const progressFill      = document.getElementById('progress-bar-fill');
     const progressFrom      = document.getElementById('progress-from-label');
     const progressTo        = document.getElementById('progress-to-label');
+    const selectedDateInput = document.getElementById('start-date');
+    const dateNoteEl        = document.getElementById('date-note');
+    const timelineList      = document.getElementById('timeline-list');
+    const moneyValueEl      = document.getElementById('money-value');
+    const moneySubEl        = document.getElementById('money-sub');
+    const setCostBtn        = document.getElementById('set-cost-btn');
+    const costInputWrap     = document.getElementById('cost-input-wrap');
+    const costInput         = document.getElementById('cost-input');
+    const costNote          = document.getElementById('cost-note');
+    const timeReclaimedEl   = document.getElementById('time-reclaimed-value');
 
-    const milestoneDays = [1, 7, 30, 90, 365];
-    const heroTone = {
+    // ── Milestone config ─────────────────────────────────────
+    const MILESTONES = [1, 7, 30, 90, 365];
+    const HERO_TONE = {
       1:   'Day 1 counts. A gentle start is still a powerful start.',
       7:   'One week in. Keep taking this one day at a time.',
       30:  'Thirty days is meaningful progress. You are doing hard things.',
@@ -336,53 +669,243 @@
       365: 'A full year. This is huge, and you earned every single day.'
     };
 
-    function getNextMilestone(day) {
-      return milestoneDays.find(m => m > day) || null;
-    }
+    // ── Recovery timeline milestones ─────────────────────────
+    const TIMELINE_MILESTONES = [
+      { key: '30min', label: '30 Minutes', ms: 30 * 60 * 1000 },
+      { key: '1hr',   label: '1 Hour',     ms: 60 * 60 * 1000 },
+      { key: '12hr',  label: '12 Hours',   ms: 12 * 60 * 60 * 1000 },
+      { key: '24hr',  label: '24 Hours',   ms: 24 * 60 * 60 * 1000 },
+      { key: '3day',  label: '3 Days',     ms: 3  * 24 * 60 * 60 * 1000 },
+      { key: '7day',  label: '7 Days',     ms: 7  * 24 * 60 * 60 * 1000 },
+      { key: '14day', label: '14 Days',    ms: 14 * 24 * 60 * 60 * 1000 },
+      { key: '30day', label: '30 Days',    ms: 30 * 24 * 60 * 60 * 1000 },
+      { key: '90day', label: '90 Days',    ms: 90 * 24 * 60 * 60 * 1000 },
+      { key: '1year', label: '1 Year',     ms: 365 * 24 * 60 * 60 * 1000 },
+    ];
+
+    // ── Benefits data by addiction type ─────────────────────
+    const BENEFITS = {
+      Alcohol: {
+        '30min': ['Blood alcohol levels begin to clear', 'Heart rate starts to normalise'],
+        '1hr':   ['Liver begins actively metabolising alcohol', 'Hydration recovery gets underway'],
+        '12hr':  ['Blood sugar levels start to stabilise', 'Sleep architecture begins improving'],
+        '24hr':  ['Withdrawal peak is passing for most people', 'Anxiety and restlessness beginning to ease'],
+        '3day':  ['Full hydration is restored', 'Energy levels are noticeably returning'],
+        '7day':  ['Liver function is measurably improving', 'Skin tone is clearer and brighter'],
+        '14day': ['Sleep is deeper and more restorative', 'Mental clarity is significantly sharper'],
+        '30day': ['Liver inflammation is reducing', 'Mood regulation is more stable day to day'],
+        '90day': ['Blood pressure has likely normalised', 'Immune function is strengthening'],
+        '1year': ['Heart disease risk reduced by up to 50%', 'Brain volume is measurably recovering'],
+      },
+      Drugs: {
+        '30min': ['Brain chemistry is beginning to rebalance', 'The peak craving moment is starting to pass'],
+        '1hr':   ['Heart rate and blood pressure are stabilising', 'Body is beginning to clear the substance'],
+        '12hr':  ['Acute withdrawal symptoms are peaking — the hardest stretch', 'Body temperature is beginning to regulate'],
+        '24hr':  ['The sharpest physical withdrawal is easing', 'Hunger and appetite are returning'],
+        '3day':  ['Most acute physical withdrawal is subsiding', 'Energy is slowly beginning to return'],
+        '7day':  ['Sleep cycles are starting to normalise', 'Mood is beginning to lift'],
+        '14day': ['Cognitive function is noticeably clearer', 'Appetite is more regulated'],
+        '30day': ['Brain dopamine receptors are beginning to recover', 'Emotional regulation is improving'],
+        '90day': ['Cravings are significantly reduced in frequency and intensity', 'Energy levels are more consistent'],
+        '1year': ['Neural pathways are significantly restored', 'Risk of relapse is meaningfully lower'],
+      },
+      Nicotine: {
+        '30min': ['Blood pressure drops toward normal range', 'Hands and feet warming as circulation improves'],
+        '1hr':   ['Carbon monoxide cleared from the blood', 'Oxygen levels are back to normal'],
+        '12hr':  ['Nicotine cravings are peaking — this is the hardest stretch', 'Blood oxygen continues to normalise'],
+        '24hr':  ['Lung cilia have begun to regenerate', 'Risk of heart attack is already decreasing'],
+        '3day':  ['Nicotine is fully out of your body', 'Breathing is noticeably easier'],
+        '7day':  ['Taste and smell are sharpening', 'Lung function is measurably improving'],
+        '14day': ['Circulation has significantly improved', 'Physical activity feels noticeably easier'],
+        '30day': ['Lung capacity is up to 30% better', 'Coughing and shortness of breath are reducing'],
+        '90day': ['Cilia fully regenerated in the lungs', 'Energy levels are markedly higher'],
+        '1year': ['Excess risk of coronary heart disease is halved', 'Lung function continues to improve'],
+      },
+      Gambling: {
+        '30min': ['Cortisol levels are beginning to ease', 'The urge is already passing its peak'],
+        '1hr':   ['Mind is beginning to think more clearly', 'One hour of financial safety behind you'],
+        '12hr':  ['A half-day of clear, safe choices', 'Stress hormones are dropping'],
+        '24hr':  ['One full day of money protected', 'Sleep quality is improving without the cycle of loss'],
+        '3day':  ['Financial breathing room is growing', 'Anxiety around money is beginning to ease'],
+        '7day':  ['One full week of savings', 'Brain\'s reward system is beginning to rebalance'],
+        '14day': ['Impulse control is noticeably improving', 'Sleep patterns are stabilising'],
+        '30day': ['A full month of financial recovery', 'Relationships are beginning to repair'],
+        '90day': ['Financial stability is significantly improved', 'Brain chemistry is more balanced'],
+        '1year': ['Long-term financial health is transformed', 'Confidence and self-trust are rebuilt'],
+      },
+      'Social Media': {
+        '30min': ['Cortisol from comparison culture is beginning to ease', 'Mind is becoming more present'],
+        '1hr':   ['First stretch of real, deep focus unlocked', 'Anxiety is already reducing'],
+        '12hr':  ['Mental noise from scrolling is quieting', 'Sleep quality improving without screen exposure'],
+        '24hr':  ['Attention span is beginning to recover', 'Mood is less volatile'],
+        '3day':  ['Deep focus periods are noticeably longer', 'Social comparison anxiety is reducing'],
+        '7day':  ['Sleep quality is measurably better', 'Real-world connections are strengthening'],
+        '14day': ['Dopamine baseline is rising naturally', 'Boredom tolerance is improving'],
+        '30day': ['Anxiety and low mood markers are often reducing', 'Productivity is meaningfully up'],
+        '90day': ['Attention span is largely restored', 'Sense of identity is less externally defined'],
+        '1year': ['Mental health markers are significantly improved', 'Authentic connection has deepened'],
+      },
+      Gaming: {
+        '30min': ['First step back into real-world presence', 'Stress from game loops is beginning to clear'],
+        '1hr':   ['Eyes and posture are getting a needed rest', 'Mind is starting to slow to a natural pace'],
+        '12hr':  ['Sleep rhythm is beginning to stabilise', 'Body clock is starting to reset'],
+        '24hr':  ['A full day of real-world engagement', 'Energy is more evenly distributed through the day'],
+        '3day':  ['Sleep quality is improving noticeably', 'Real-world motivation is starting to return'],
+        '7day':  ['Dopamine system is beginning to rebalance', 'Social withdrawal is reducing'],
+        '14day': ['Sense of real-world accomplishment is growing', 'Focus in daily tasks is improving'],
+        '30day': ['Hobbies and relationships are getting more space', 'Anxiety and irritability are reducing'],
+        '90day': ['Executive function and planning are improving', 'Real-life goals feel more achievable'],
+        '1year': ['Identity and purpose are less tied to gaming', 'Relationships and wellbeing are transformed'],
+      },
+      Other: {
+        '30min': ['The urge is already beginning to pass', 'Each moment of resistance builds real strength'],
+        '1hr':   ['Your body and mind are starting to recalibrate', 'The hardest moment is often right now — and you\'re through it'],
+        '12hr':  ['A half-day of clear, intentional choices', 'Rest becomes more restorative when the habit is paused'],
+        '24hr':  ['One full day of choosing differently', 'Clarity is beginning to arrive'],
+        '3day':  ['The habit cycle is being interrupted', 'Real momentum is building'],
+        '7day':  ['One week of new neural pathways forming', 'Your confidence in yourself is growing'],
+        '14day': ['The urge comes less often', 'You are proving to yourself that you can do this'],
+        '30day': ['A month of a new pattern taking hold', 'The pull is weaker than it was at the start'],
+        '90day': ['Three months of consistent choices', 'The life you\'re building is taking shape'],
+        '1year': ['A full year of hard, honest work', 'This is a foundation — not just a milestone'],
+      },
+    };
+
+    // ── Module-level state ───────────────────────────────────
+    let tickInterval      = null;
+    let currentIsoStr     = null;
+    let currentAddiction  = 'Other';
+    let currentDailyCost  = null;
+
+    // ── Helpers ──────────────────────────────────────────────
+    function pad2(n) { return String(n).padStart(2, '0'); }
+
+    function getNextMilestone(day) { return MILESTONES.find(m => m > day) || null; }
     function getPrevMilestone(day) {
-      const passed = milestoneDays.filter(m => m <= day);
+      const passed = MILESTONES.filter(m => m <= day);
       return passed.length ? passed[passed.length - 1] : 0;
     }
 
-    function renderStreak(day) {
-      currentDayEl.textContent = String(day);
+    function getElapsedSeconds(isoString) {
+      const normalised = isoString.includes('T') ? isoString : isoString + 'T00:00:00';
+      const start = new Date(normalised);
+      if (isNaN(start.getTime())) return 0;
+      return Math.max(0, Math.floor((Date.now() - start.getTime()) / 1000));
+    }
 
+    function getStartDate(isoString) {
+      const normalised = isoString.includes('T') ? isoString : isoString + 'T00:00:00';
+      return new Date(normalised);
+    }
+
+    function secondsToComponents(totalSeconds) {
+      const days  = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const mins  = Math.floor((totalSeconds % 3600) / 60);
+      const secs  = totalSeconds % 60;
+      return { days, hours, mins, secs };
+    }
+
+    function formatDateTime(date) {
+      return date.toLocaleString('en-AU', {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true
+      });
+    }
+
+    // ── Render milestones & hero copy ────────────────────────
+    function renderMilestonesAndCopy(day) {
       milestoneItems.forEach((item, idx) => {
-        item.classList.toggle('done', day >= milestoneDays[idx]);
+        item.classList.toggle('done', day >= MILESTONES[idx]);
       });
 
-      if (day >= 365)      heroCopyEl.textContent = heroTone[365];
-      else if (day >= 90)  heroCopyEl.textContent = heroTone[90];
-      else if (day >= 30)  heroCopyEl.textContent = heroTone[30];
-      else if (day >= 7)   heroCopyEl.textContent = heroTone[7];
-      else                 heroCopyEl.textContent = heroTone[1];
+      if (day >= 365)     heroCopyEl.textContent = HERO_TONE[365];
+      else if (day >= 90) heroCopyEl.textContent = HERO_TONE[90];
+      else if (day >= 30) heroCopyEl.textContent = HERO_TONE[30];
+      else if (day >= 7)  heroCopyEl.textContent = HERO_TONE[7];
+      else                heroCopyEl.textContent = HERO_TONE[1];
 
-      // Progress bar
       const next = getNextMilestone(day);
       const prev = getPrevMilestone(day);
       if (next) {
         const pct = Math.round(((day - prev) / (next - prev)) * 100);
         progressFill.style.width = pct + '%';
         progressFrom.textContent = `Day ${day}`;
-        progressTo.textContent = `Next: Day ${next}`;
+        progressTo.textContent   = `Next: Day ${next}`;
       } else {
         progressFill.style.width = '100%';
         progressFrom.textContent = `Day ${day}`;
-        progressTo.textContent = '🎉 All milestones reached';
+        progressTo.textContent   = '🎉 All milestones reached';
       }
     }
 
-    // Count-up animation on load (once per session)
+    // ── Render recovery timeline ─────────────────────────────
+    function renderTimeline(isoString, addictionType) {
+      const startDate = getStartDate(isoString);
+      const now = Date.now();
+      const benefitMap = BENEFITS[addictionType] || BENEFITS['Other'];
+
+      timelineList.innerHTML = '';
+
+      TIMELINE_MILESTONES.forEach(({ key, label, ms }) => {
+        const milestoneDate = new Date(startDate.getTime() + ms);
+        const hasPassed = milestoneDate.getTime() <= now;
+        const benefits = benefitMap[key] || ['Your body and mind are healing', 'Each moment builds on the last'];
+
+        const item = document.createElement('div');
+        item.className = `tl-item ${hasPassed ? 'passed' : 'future'}`;
+        item.innerHTML = `
+          <div class="tl-item-header">
+            <div class="tl-left">
+              <div class="tl-label">${label}</div>
+              <div class="tl-date">${formatDateTime(milestoneDate)}</div>
+            </div>
+            <div class="tl-badge ${hasPassed ? '' : 'upcoming'}">${hasPassed ? '✓' : 'upcoming'}</div>
+          </div>
+          <ul class="tl-benefits">
+            <li>${benefits[0]}</li>
+            <li>${benefits[1]}</li>
+          </ul>
+        `;
+        timelineList.appendChild(item);
+      });
+    }
+
+    // ── Render stats ─────────────────────────────────────────
+    function renderStats(isoString, dailyCost) {
+      const totalSeconds = getElapsedSeconds(isoString);
+      const { days } = secondsToComponents(totalSeconds);
+      const totalHours = Math.floor(totalSeconds / 3600);
+
+      // Time reclaimed
+      timeReclaimedEl.textContent = totalHours.toLocaleString();
+
+      // Money saved
+      const cost = parseFloat(dailyCost);
+      if (!cost || isNaN(cost)) {
+        moneyValueEl.textContent = '—';
+        moneySubEl.textContent   = '';
+        setCostBtn.hidden = false;
+      } else {
+        const saved = (days * cost).toFixed(2);
+        moneyValueEl.textContent = '$' + Number(saved).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        moneySubEl.textContent   = `$${cost.toFixed(2)}/day × ${days} day${days !== 1 ? 's' : ''}`;
+        setCostBtn.hidden = false; // keep visible so they can update it
+      }
+    }
+
+    // ── Count-up animation ───────────────────────────────────
     function animateCount(target) {
+      currentDayEl.classList.remove('loading-pulse');
       if (sessionStorage.getItem('streak-counted')) {
         currentDayEl.textContent = String(target);
         return;
       }
       sessionStorage.setItem('streak-counted', '1');
       const duration = 800;
-      const start = performance.now();
+      const startTime = performance.now();
       function tick(now) {
-        const t = Math.min((now - start) / duration, 1);
+        const t     = Math.min((now - startTime) / duration, 1);
         const eased = 1 - Math.pow(1 - t, 3);
         currentDayEl.textContent = String(Math.round(eased * target));
         if (t < 1) requestAnimationFrame(tick);
@@ -390,7 +913,92 @@
       requestAnimationFrame(tick);
     }
 
-    // Edit start date toggle
+    // ── Live ticker ──────────────────────────────────────────
+    function startTicker(isoString) {
+      if (tickInterval) clearInterval(tickInterval);
+
+      function tick() {
+        const total = getElapsedSeconds(isoString);
+        const { days, hours, mins, secs } = secondsToComponents(total);
+
+        currentDayEl.textContent       = String(days);
+        timeHH.textContent             = pad2(hours);
+        timeMM.textContent             = pad2(mins);
+        timeSS.textContent             = pad2(secs);
+        renderMilestonesAndCopy(days);
+
+        // Update stats on each tick (cheap recalculation)
+        if (currentIsoStr) renderStats(currentIsoStr, currentDailyCost);
+      }
+
+      tick();
+      tickInterval = setInterval(tick, 1000);
+    }
+
+    // ── Placeholder mode ─────────────────────────────────────
+    function showPlaceholder() {
+      if (tickInterval) clearInterval(tickInterval);
+      tickInterval = null;
+
+      const PLACEHOLDER_DAYS = 47;
+      currentDayEl.classList.remove('loading-pulse');
+      currentDayEl.textContent = String(PLACEHOLDER_DAYS);
+      timeHH.textContent = '11';
+      timeMM.textContent = '23';
+      timeSS.textContent = '04';
+      streakNote.hidden = false;
+      renderMilestonesAndCopy(PLACEHOLDER_DAYS);
+
+      // Timeline placeholder
+      timelineList.innerHTML = '<p class="timeline-placeholder">Set your start date to see your recovery timeline.</p>';
+
+      // Stats placeholder
+      moneyValueEl.textContent = '—';
+      timeReclaimedEl.textContent = '—';
+    }
+
+    // ── Bootstrap: fetch profile from Supabase ───────────────
+    async function init() {
+      const profileId = localStorage.getItem('profileId');
+      if (!profileId) {
+        showPlaceholder();
+        animateCount(47);
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('sobriety_start_date, addiction_type, daily_cost')
+        .eq('id', profileId)
+        .single();
+
+      if (error || !profile || !profile.sobriety_start_date) {
+        showPlaceholder();
+        animateCount(47);
+        return;
+      }
+
+      const { sobriety_start_date, addiction_type, daily_cost } = profile;
+      currentIsoStr    = sobriety_start_date;
+      currentAddiction = addiction_type || 'Other';
+      currentDailyCost = daily_cost;
+
+      streakNote.hidden = true;
+
+      const initialTotal = getElapsedSeconds(sobriety_start_date);
+      const { days } = secondsToComponents(initialTotal);
+      animateCount(days);
+      renderMilestonesAndCopy(days);
+      startTicker(sobriety_start_date);
+
+      // Pre-fill date input
+      selectedDateInput.value = sobriety_start_date.slice(0, 10);
+
+      renderTimeline(sobriety_start_date, currentAddiction);
+      renderStats(sobriety_start_date, daily_cost);
+    }
+
+    // ── Edit start date toggle ───────────────────────────────
     const editBtn   = document.getElementById('edit-date-btn');
     const datePanel = document.getElementById('date-panel');
 
@@ -400,31 +1008,112 @@
       datePanel.setAttribute('aria-hidden', String(!isOpen));
     });
 
-    applyDateBtn.addEventListener('click', () => {
-      if (!selectedDateInput.value) {
+    document.getElementById('apply-date').addEventListener('click', async () => {
+      const val = selectedDateInput.value;
+      if (!val) {
         dateNoteEl.textContent = 'Pick a start date first, then tap Update.';
         return;
       }
-      const start = new Date(selectedDateInput.value + 'T00:00:00');
-      const today = new Date();
-      const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const days = Math.max(Math.floor((todayMidnight - start) / 86400000) + 1, 1);
-      renderStreak(days);
-      animateCount(days);
-      dateNoteEl.textContent = `Tracking from ${selectedDateInput.value}. Currently Day ${days}.`;
-    });
-
-    document.getElementById('reset-btn').addEventListener('click', () => {
-      if (confirm('Reset your streak to Day 1? This is a fresh start, not a failure.')) {
-        renderStreak(1);
-        animateCount(1);
-        selectedDateInput.value = '';
-        dateNoteEl.textContent = 'Streak reset with care. Day 1 starts now.';
+      const chosen = new Date(val + 'T00:00:00');
+      if (chosen > new Date()) {
+        dateNoteEl.textContent = 'Start date can\'t be in the future. Pick today or an earlier date.';
+        return;
       }
+
+      const profileId = localStorage.getItem('profileId');
+      if (profileId) {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ sobriety_start_date: val })
+          .eq('id', profileId);
+        if (error) {
+          dateNoteEl.textContent = 'Something went wrong saving your date. Try again.';
+          return;
+        }
+      }
+
+      currentIsoStr = val;
+      streakNote.hidden = true;
+      sessionStorage.removeItem('streak-counted');
+      startTicker(val);
+      const { days } = secondsToComponents(getElapsedSeconds(val));
+      animateCount(days);
+      renderTimeline(val, currentAddiction);
+      renderStats(val, currentDailyCost);
+      dateNoteEl.textContent = `Tracking from ${val}. The timer is now live.`;
     });
 
-    renderStreak(47);
-    animateCount(47);
+    // ── Set daily cost ───────────────────────────────────────
+    setCostBtn.addEventListener('click', () => {
+      costInputWrap.classList.toggle('open');
+      if (currentDailyCost) costInput.value = currentDailyCost;
+    });
+
+    document.getElementById('cost-save-btn').addEventListener('click', async () => {
+      const val = parseFloat(costInput.value);
+      if (isNaN(val) || val < 0) {
+        costNote.textContent = 'Enter a number (e.g. 15.00 for $15/day)';
+        return;
+      }
+
+      const profileId = localStorage.getItem('profileId');
+      if (profileId) {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ daily_cost: val })
+          .eq('id', profileId);
+        if (error) {
+          costNote.textContent = 'Something went wrong. Try again.';
+          return;
+        }
+      }
+
+      currentDailyCost = val;
+      costInputWrap.classList.remove('open');
+      costNote.textContent = 'Your daily spend on this habit';
+      if (currentIsoStr) renderStats(currentIsoStr, val);
+    });
+
+    // ── Reset streak ─────────────────────────────────────────
+    document.getElementById('reset-btn').addEventListener('click', async () => {
+      if (!confirm('Reset your streak to Day 0? This is a fresh start, not a failure.')) return;
+
+      const nowISO = new Date().toISOString();
+      const profileId = localStorage.getItem('profileId');
+
+      if (profileId) {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ sobriety_start_date: nowISO })
+          .eq('id', profileId);
+        if (error) {
+          const resetError = document.getElementById('reset-error');
+          resetError.textContent = 'Something went wrong resetting your streak. Please try again.';
+          resetError.classList.add('visible');
+          return;
+        }
+      }
+
+      currentIsoStr = nowISO;
+      streakNote.hidden = true;
+      sessionStorage.removeItem('streak-counted');
+      startTicker(nowISO);
+      currentDayEl.textContent = '0';
+      timeHH.textContent = '00';
+      timeMM.textContent = '00';
+      timeSS.textContent = '00';
+      renderMilestonesAndCopy(0);
+      renderTimeline(nowISO, currentAddiction);
+      renderStats(nowISO, currentDailyCost);
+      dateNoteEl.textContent = 'Streak reset with care. Your clock starts now.';
+
+      selectedDateInput.value = nowISO.slice(0, 10);
+      datePanel.classList.remove('open');
+      editBtn.setAttribute('aria-expanded', 'false');
+      datePanel.setAttribute('aria-hidden', 'true');
+    });
+
+    init();
   </script>
 </body>
 </html>
