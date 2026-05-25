@@ -966,6 +966,13 @@
         return;
       }
 
+      // Restore auth session — required once RLS is live
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.replace('onboarding.html');
+        return;
+      }
+
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('sobriety_start_date, addiction_type, daily_cost')
@@ -1107,7 +1114,7 @@
       renderStats(nowISO, currentDailyCost);
       dateNoteEl.textContent = 'Streak reset with care. Your clock starts now.';
 
-      selectedDateInput.value = nowISO.slice(0, 10);
+      selectedDateInput.value = new Date().toLocaleDateString('en-CA'); // local date, not UTC
       datePanel.classList.remove('open');
       editBtn.setAttribute('aria-expanded', 'false');
       datePanel.setAttribute('aria-hidden', 'true');

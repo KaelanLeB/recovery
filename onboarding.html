@@ -580,6 +580,12 @@
     saveAndComplete();
   });
 
+  function restoreBtn() {
+    btnStep4.disabled = false;
+    btnStep4.classList.add('ready');
+    btnStep4.innerHTML = 'Start my journey <span class="arrow">→</span>';
+  }
+
   async function saveAndComplete() {
     // Prevent double-submit
     btnStep4.disabled = true;
@@ -587,8 +593,19 @@
     btnStep4.textContent = 'Saving…';
     saveError.classList.remove('visible');
 
-    const profileId = crypto.randomUUID();
+    // 1. Create anonymous auth session — must succeed before inserting profile
+    const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
 
+    if (authError || !authData?.user) {
+      restoreBtn();
+      saveError.textContent = "Couldn't connect to save your profile — please check your connection and try again.";
+      saveError.classList.add('visible');
+      return;
+    }
+
+    const profileId = authData.user.id;
+
+    // 2. Insert profile row using the auth UUID as the primary key
     const { error } = await supabase.from('profiles').insert({
       id:                   profileId,
       name:                 state.userName,
@@ -599,10 +616,7 @@
     });
 
     if (error) {
-      // Restore button so user can retry
-      btnStep4.disabled = false;
-      btnStep4.classList.add('ready');
-      btnStep4.innerHTML = 'Start my journey <span class="arrow">→</span>';
+      restoreBtn();
       saveError.textContent = "Something went wrong saving your profile. Please check your connection and try again.";
       saveError.classList.add('visible');
       return;

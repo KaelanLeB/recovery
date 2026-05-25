@@ -166,3 +166,44 @@ Reference
 Full competitive research with rationale, screenshots-by-description, and sources:
 @./docs/recovery-app-uiux-research.md
 When working on a UI/UX change, you can either let CLAUDE.md guide you (above) or invoke /apply-recovery-pattern <component-path> to load the full research and propose concrete changes against a specific component.
+
+---
+
+## Technical State (as of 2026-05-24)
+
+### Database — Supabase project `asjgudrxgyrsydntqrak`
+
+**`profiles` table** — created in an earlier session. Columns: `id` (uuid PK), `name` (text), `addiction_type` (text), `addiction_specific` (text, nullable), `sobriety_start_date` (timestamptz), `personal_why` (text, nullable), `daily_cost` (numeric, nullable).
+
+**`checkins` table** — created 2026-05-24. Columns: `id` (uuid PK, gen_random_uuid()), `profile_id` (uuid NOT NULL, FK → profiles.id), `checked_in_at` (date NOT NULL, default CURRENT_DATE), `sober` (boolean NOT NULL), `mood` (text, nullable), `note` (text, nullable), `created_at` (timestamptz NOT NULL, default now()). Unique constraint on `(profile_id, checked_in_at)` — enforces one check-in per user per day at the database level.
+
+### Authentication
+
+Supabase Anonymous Auth is wired through `onboarding.html`. On onboarding completion, `supabase.auth.signInAnonymously()` is called first; the returned `user.id` is used as the profile's primary key and stored in `localStorage` as `profileId`. Every new user gets a real Supabase auth session without needing an email or password.
+
+**`profileId` in localStorage** now equals `auth.user.id` (the anonymous auth UUID) — not a client-generated `crypto.randomUUID()`. Existing profiles created before this change (using `crypto.randomUUID()`) are legacy and will not have a matching auth session.
+
+`index.html` and `streak.html` call `supabase.auth.getSession()` on page load and redirect to `onboarding.html` if no session is found.
+
+### Row Level Security (RLS)
+
+⚠️ **RLS is not yet enabled.** The code is fully wired for auth-based RLS but the dashboard step has not been completed. To enable RLS, run the following SQL in the Supabase SQL Editor and confirm Anonymous Auth is enabled under Authentication → Providers:
+
+```sql
+-- profiles
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "profiles_select_own"  ON profiles FOR SELECT USING       (auth.uid() = id);
+CREATE POLICY "profiles_insert_own"  ON profiles FOR INSERT WITH CHECK  (auth.uid() = id);
+CREATE POLICY "profiles_update_own"  ON profiles FOR UPDATE USING       (auth.uid() = id);
+
+-- checkins
+ALTER TABLE checkins ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "checkins_select_own"  ON checkins FOR SELECT USING       (auth.uid() = profile_id);
+CREATE POLICY "checkins_insert_own"  ON checkins FOR INSERT WITH CHECK  (auth.uid() = profile_id);
+```
+
+Once applied, update this section to reflect RLS is live. Existing test rows inserted before auth was wired up will become inaccessible (their `id`/`profile_id` won't match any `auth.uid()`).
+
+### Date handling
+
+All date comparisons and inserts use `new Date().toLocaleDateString('en-CA')` which produces `"YYYY-MM-DD"` in the user's local timezone. This prevents off-by-one errors for users in UTC-offset timezones (e.g. Vancouver at UTC-7/8) checking in after ~4–5 pm.

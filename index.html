@@ -451,6 +451,61 @@
     .summary-row .summary-emoji { font-size: 20px; }
     .summary-row strong { color: var(--ink-900); }
 
+    .save-error {
+      min-height: 1.2em;
+      font-size: 14px;
+      color: #b45309;
+      text-align: center;
+      margin: 8px 0 4px;
+    }
+
+    /* ── Loading state ─────────────────────────────────── */
+    .checkin-loading {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: var(--ink-400, #9ca3af);
+      font-size: 15px;
+    }
+    .checkin-loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--sage-100, #d1fae5);
+      border-top-color: var(--sage-500, #10b981);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Already checked in ────────────────────────────── */
+    .checkin-done-today {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 12px;
+      padding: 24px 0;
+    }
+    .checkin-done-today[hidden] { display: none; }
+    .checkin-done-icon { font-size: 48px; }
+    .checkin-done-today h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink-900);
+      margin: 0;
+    }
+    .checkin-done-today p {
+      font-size: 15px;
+      color: var(--ink-500, #6b7280);
+      margin: 0;
+    }
+
     .slip-complete-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
     .slip-heading {
       font-family: 'Fraunces', serif;
@@ -576,8 +631,22 @@
   <!-- Card -->
   <main class="card" id="check-in-main">
 
+    <!-- ── Loading state ─────────────────────────────────── -->
+    <div class="checkin-loading" id="checkin-loading" aria-label="Loading" aria-live="polite">
+      <div class="checkin-loading-spinner" aria-hidden="true"></div>
+      <p>Just a moment…</p>
+    </div>
+
+    <!-- ── Already checked in today ──────────────────────── -->
+    <div class="checkin-done-today" id="checkin-done-today" hidden>
+      <div class="checkin-done-icon">🌿</div>
+      <h2>You've already checked in today.</h2>
+      <p>Come back tomorrow — you're doing great.</p>
+      <a class="btn-primary always-ready" href="streak.html" style="display:inline-block; text-align:center; text-decoration:none; margin-top:8px;">See my streak →</a>
+    </div>
+
     <!-- ── Step 1: Mood ─────────────────────────────────── -->
-    <div class="step active" id="step-1">
+    <div class="step" id="step-1">
       <p class="step-eyebrow">Daily Check-In</p>
       <h1>Hey. How are you feeling today?</h1>
       <p class="sub" id="step1-sub">No right or wrong answer — just check in with yourself.</p>
@@ -710,6 +779,7 @@
         </div>
       </div>
 
+      <p class="save-error" id="save-error-sober" role="alert" aria-live="polite"></p>
       <button class="btn-primary always-ready" id="btn-done-sober" style="margin-top:28px;">Done</button>
     </div>
 
@@ -717,11 +787,12 @@
     <div class="step" id="step-4b">
       <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top:16px;">
         <div class="slip-complete-icon">🫂</div>
-        <p class="slip-heading">Check-in saved.</p>
+        <p class="slip-heading">You showed up today.</p>
         <p class="slip-message">
-          You showed up today. That's not nothing — that's everything.<br><br>
+          That's not nothing — that's everything.<br><br>
           Tomorrow is a new start. When you're ready, you can reset your streak. Or just take it one hour at a time.
         </p>
+        <p class="save-error" id="save-error-slip" role="alert" aria-live="polite"></p>
         <button class="btn-reset-streak" id="btn-reset-streak">Reset my streak</button>
         <button class="btn-primary always-ready" id="btn-done-slip">I'll wait — keep my streak</button>
       </div>
@@ -859,8 +930,42 @@
   renderStreakState(streakSelect.value);
 
   // ── Live data from Supabase ────────────────────────────
+  const loadingEl   = document.getElementById('checkin-loading');
+  const doneTodayEl = document.getElementById('checkin-done-today');
+
+  async function loadTodayCheckin() {
+    const todayISO = new Date().toLocaleDateString('en-CA');
+    const { data } = await supabase
+      .from('checkins')
+      .select('id')
+      .eq('profile_id', profileId)
+      .eq('checked_in_at', todayISO)
+      .maybeSingle();
+
+    // Hide loading state regardless of result
+    loadingEl.style.display = 'none';
+
+    if (data) {
+      // Already checked in today — show done-today message
+      doneTodayEl.hidden = false;
+      // Also hide progress dots (they belong to the form flow)
+      document.getElementById('progress-dots').style.display = 'none';
+    } else {
+      // Not yet checked in — reveal the form at Step 1
+      document.getElementById('step-1').classList.add('active');
+    }
+  }
+
   async function initFromSupabase() {
     if (!profileId) return;
+
+    // Restore auth session — required once RLS is live
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      window.location.replace('onboarding.html');
+      return;
+    }
+
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('name, sobriety_start_date')
@@ -868,17 +973,18 @@
       .single();
     if (error || !profile) {
       setGreeting();
-      return;
+    } else {
+      setGreeting(profile.name);
+      // Calculate real streak and re-render
+      if (profile.sobriety_start_date) {
+        const start = new Date(profile.sobriety_start_date);
+        const diffDays = Math.floor((Date.now() - start.getTime()) / 86400000);
+        renderStreakState(Math.max(0, diffDays));
+      }
     }
 
-    setGreeting(profile.name);
-
-    // Calculate real streak and re-render
-    if (profile.sobriety_start_date) {
-      const start = new Date(profile.sobriety_start_date);
-      const diffDays = Math.floor((Date.now() - start.getTime()) / 86400000);
-      renderStreakState(Math.max(0, diffDays));
-    }
+    // Today-guard: always runs, reveals form or done-today message
+    await loadTodayCheckin();
   }
   initFromSupabase();
 
@@ -1000,17 +1106,80 @@
   document.getElementById('btn-slip-done').addEventListener('click', () => showStep('step-4b', 3));
   document.getElementById('btn-slip-skip').addEventListener('click', () => showStep('step-4b', 3));
 
-  // ── Step 4a / 4b: Done ────────────────────────────────
-  document.getElementById('btn-done-sober').addEventListener('click', () => {
-    alert('Check-in saved. See you tomorrow. 🌿');
-  });
-  document.getElementById('btn-done-slip').addEventListener('click', () => {
-    alert('Check-in saved. One hour at a time. 🫂');
-  });
-  document.getElementById('btn-reset-streak').addEventListener('click', () => {
-    if (confirm('Reset your streak to Day 0? This is a fresh start — not a failure.')) {
-      alert('Streak reset. Day 1 starts when you\'re ready. 🌱');
+  // ── saveCheckin ────────────────────────────────────────
+  async function saveCheckin(isSober) {
+    const todayISO = new Date().toLocaleDateString('en-CA');
+    const btn   = document.getElementById(isSober ? 'btn-done-sober' : 'btn-done-slip');
+    const errEl = document.getElementById(isSober ? 'save-error-sober' : 'save-error-slip');
+    const originalText = btn.textContent;
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    errEl.textContent = '';
+
+    const { error } = await supabase.from('checkins').insert({
+      profile_id:    profileId,
+      checked_in_at: todayISO,
+      sober:         isSober,
+      mood:          state.mood ?? null,
+      note:          state.note || null,
+    });
+
+    if (error) {
+      errEl.textContent = error.code === '23505'
+        ? "Looks like you've already checked in today 🌿"
+        : 'Something went wrong. Please check your connection and try again.';
+      btn.disabled = false;
+      btn.textContent = originalText;
+      return;
     }
+
+    window.location.href = 'streak.html';
+  }
+
+  // ── Step 4a / 4b: Done ────────────────────────────────
+  document.getElementById('btn-done-sober').addEventListener('click', () => saveCheckin(true));
+  document.getElementById('btn-done-slip').addEventListener('click',  () => saveCheckin(false));
+
+  document.getElementById('btn-reset-streak').addEventListener('click', async () => {
+    const todayISO  = new Date().toLocaleDateString('en-CA');
+    const resetBtn  = document.getElementById('btn-reset-streak');
+    const errEl     = document.getElementById('save-error-slip');
+
+    resetBtn.disabled = true;
+    resetBtn.textContent = 'Saving…';
+    errEl.textContent = '';
+
+    // 1. Insert check-in (slip) — ignore 23505 if user already checked in today
+    const { error: checkinError } = await supabase.from('checkins').insert({
+      profile_id:    profileId,
+      checked_in_at: todayISO,
+      sober:         false,
+      mood:          state.mood ?? null,
+      note:          state.note || null,
+    });
+
+    if (checkinError && checkinError.code !== '23505') {
+      errEl.textContent = 'Something went wrong. Please check your connection and try again.';
+      resetBtn.disabled = false;
+      resetBtn.textContent = 'Reset my streak';
+      return;
+    }
+
+    // 2. Reset streak — inline, same pattern as streak.html
+    const { error: resetError } = await supabase
+      .from('profiles')
+      .update({ sobriety_start_date: todayISO })
+      .eq('id', profileId);
+
+    if (resetError) {
+      errEl.textContent = 'Check-in saved, but streak reset failed. Please try again.';
+      resetBtn.disabled = false;
+      resetBtn.textContent = 'Reset my streak';
+      return;
+    }
+
+    window.location.href = 'streak.html';
   });
 </script>
 </body>
