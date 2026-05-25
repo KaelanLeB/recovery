@@ -9,6 +9,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./theme.css" />
   <style>
+    /* ── App-init overlay ──────────────────────────────── */
+    #app-init {
+      position: fixed;
+      inset: 0;
+      background: #f6f2ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .app-init-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(47,85,80,.15);
+      border-top-color: #3b6a64;
+      border-radius: 50%;
+      animation: app-init-spin 0.7s linear infinite;
+    }
+    @keyframes app-init-spin { to { transform: rotate(360deg); } }
+
     .shell {
       padding: 24px 16px 0;
       gap: 14px;
@@ -493,6 +513,7 @@
   </style>
 </head>
 <body>
+<div id="app-init" aria-hidden="true"><div class="app-init-spinner"></div></div>
   <a class="skip-link" href="#streak-main">Skip to content</a>
   <main class="shell" id="streak-main" tabindex="-1">
     <div class="top">
@@ -636,6 +657,14 @@
 
   <script type="module">
     import { supabase } from './supabase.js';
+
+    // ── Auth init: nothing renders until session is known ─
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      window.location.replace('onboarding.html');
+      await new Promise(() => {}); // halt module while browser navigates
+    }
+    document.getElementById('app-init').remove();
 
     // ── DOM refs ─────────────────────────────────────────────
     const currentDayEl      = document.getElementById('current-day');
@@ -963,13 +992,6 @@
       if (!profileId) {
         showPlaceholder();
         animateCount(47);
-        return;
-      }
-
-      // Restore auth session — required once RLS is live
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        window.location.replace('onboarding.html');
         return;
       }
 

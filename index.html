@@ -9,6 +9,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="theme.css" />
   <style>
+    /* ── App-init overlay ──────────────────────────────── */
+    #app-init {
+      position: fixed;
+      inset: 0;
+      background: #f6f2ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .app-init-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(47,85,80,.15);
+      border-top-color: #3b6a64;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
     /* Check-in page */
 
     /* ── Compact header row ─────────────────────────────── */
@@ -591,6 +610,7 @@
   </style>
 </head>
 <body>
+<div id="app-init" aria-hidden="true"><div class="app-init-spinner"></div></div>
 <a class="skip-link" href="#check-in-main">Skip to check-in</a>
 <div class="shell">
 
@@ -818,11 +838,15 @@
 <script type="module">
   import { supabase } from './supabase.js';
 
-  // ── Onboarding guard ──────────────────────────────────
-  const profileId = localStorage.getItem('profileId');
-  if (!profileId) {
+  // ── Auth init: nothing renders until session is known ─
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
     window.location.replace('onboarding.html');
+    await new Promise(() => {}); // halt module while browser navigates
   }
+  document.getElementById('app-init').remove();
+
+  const profileId = localStorage.getItem('profileId') || session.user.id;
 
   // ── Dev controls via query param ───────────────────────
   if (location.search.includes('dev=1')) {
@@ -958,13 +982,6 @@
 
   async function initFromSupabase() {
     if (!profileId) return;
-
-    // Restore auth session — required once RLS is live
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      window.location.replace('onboarding.html');
-      return;
-    }
 
     const { data: profile, error } = await supabase
       .from('profiles')
