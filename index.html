@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Check-In — Recovery App</title>
+  <title>Home — Recovery App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="theme.css" />
   <style>
     /* ── App-init overlay ──────────────────────────────── */
@@ -27,46 +27,36 @@
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Check-in page */
+    /* ── Shell ─────────────────────────────────────────── */
+    .shell {
+      padding: 20px 16px 0;
+      gap: 12px;
+    }
 
-    /* ── Compact header row ─────────────────────────────── */
-    .checkin-header {
+    /* ── Header ────────────────────────────────────────── */
+    .home-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 20px 0;
       gap: 12px;
+      flex-shrink: 0;
     }
-    .header-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .greeting-line {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ink-500);
-    }
-    .streak-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 14px;
+    .greeting {
+      font-size: 20px;
       font-weight: 600;
-      color: var(--sage-700);
-      background: var(--sage-50);
-      border: 1px solid var(--sage-100);
-      border-radius: var(--radius-pill);
-      padding: 6px 12px;
+      color: var(--ink-900);
+      line-height: 1.2;
     }
     .header-date {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--ink-300);
       font-weight: 500;
-      margin-top: 2px;
+      margin-top: 3px;
     }
-    /* SOS pill (top-right) */
+
+    /* ── SOS pill ──────────────────────────────────────── */
     .sos-pill {
       display: inline-flex;
       align-items: center;
@@ -84,9 +74,7 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
-    .sos-pill:hover {
-      background: var(--alert-200);
-    }
+    .sos-pill:hover { background: var(--alert-200); }
     .sos-pill:focus-visible {
       outline: none;
       box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--alert-600);
@@ -104,727 +92,259 @@
       50%       { opacity: .5; transform: scale(.7); }
     }
 
-    .tone-note {
-      padding: 8px 20px 0;
-      font-size: 13px;
-      line-height: 1.55;
-      color: var(--ink-500);
-    }
-
-    /* ── Progress dots ──────────────────────────────────── */
-    .progress {
-      display: flex;
-      gap: 6px;
-      justify-content: center;
-      padding: 16px 0 4px;
-    }
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--sage-100);
-      transition: background 0.3s, transform 0.3s;
-    }
-    .dot.active  { background: var(--sage-700); transform: scale(1.3); }
-    .dot.done    { background: var(--sage-600); }
-
-    /* ── Card ───────────────────────────────────────────── */
+    /* ── Card ──────────────────────────────────────────── */
     .card {
       background: var(--surface);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-soft);
-      margin: 12px 16px 0;
-      padding: 28px 24px 24px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+      padding: 24px;
     }
 
-    /* ── Step visibility ────────────────────────────────── */
-    .step { display: none; flex-direction: column; flex: 1; }
-    .step.active { display: flex; animation: fadeUp 0.3s var(--ease); }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── Typography ─────────────────────────────────────── */
-    .step-eyebrow {
+    /* ── Card eyebrow ──────────────────────────────────── */
+    .card-eyebrow {
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--ink-500);
-      margin-bottom: 10px;
-    }
-    h1 {
-      font-family: 'Fraunces', serif;
-      font-size: 28px;
-      font-weight: 600;
-      line-height: 1.25;
-      letter-spacing: -0.015em;
-      color: var(--ink-900);
-      margin-bottom: 8px;
-    }
-    .sub {
-      font-size: 16px;
-      color: var(--ink-700);
-      line-height: 1.6;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
     }
 
-    /* ── Mood grid ──────────────────────────────────────── */
-    .mood-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-    .mood-btn {
-      background: transparent;
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 14px 4px 10px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.2s, border-color 0.2s, transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      font-family: inherit;
-      min-height: 72px;
-    }
-    .mood-btn:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-      border-radius: var(--radius-md);
-    }
-    .mood-btn .emoji {
-      font-size: 28px;
-      line-height: 1;
-      display: block;
-      transition: transform 0.2s var(--ease);
-    }
-    .mood-btn .label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ink-500);
-      letter-spacing: 0;
-    }
-    .mood-btn:hover .emoji { transform: scale(1.08); }
-
-    /* Mood halos on selection */
-    .mood-btn[aria-pressed="true"] .emoji { transform: scale(1.12); }
-    .mood-btn[data-mood="rough"][aria-pressed="true"]  { background: #efeae4; border: 1.5px solid #d6ccc0; }
-    .mood-btn[data-mood="tough"][aria-pressed="true"]  { background: #eaeef4; border: 1.5px solid #c8d3e1; }
-    .mood-btn[data-mood="okay"][aria-pressed="true"]   { background: #f0eeea; border: 1.5px solid #d3ccc1; }
-    .mood-btn[data-mood="good"][aria-pressed="true"]   { background: var(--good-50); border: 1.5px solid #c8dcce; }
-    .mood-btn[data-mood="great"][aria-pressed="true"]  { background: var(--warn-50); border: 1.5px solid #ddcda0; }
-    .mood-btn[aria-pressed="true"] .label { color: var(--ink-700); }
-
-    /* ── Journal reveal (optional) ──────────────────────── */
-    .journal-reveal {
-      overflow: hidden;
-      max-height: 0;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: max-height 0.35s var(--ease), opacity 0.3s var(--ease), transform 0.3s var(--ease);
-      margin-bottom: 0;
-    }
-    .journal-reveal.visible {
-      max-height: 120px;
-      opacity: 1;
-      transform: translateY(0);
-      margin-bottom: 20px;
-    }
-    .journal-inline-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink-500);
-      margin-bottom: 6px;
-      display: block;
-    }
-    .journal-inline {
-      width: 100%;
-      border: 1.5px solid var(--sage-100);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      font-size: 15px;
-      font-family: 'Inter', inherit;
-      color: var(--ink-900);
-      resize: none;
-      line-height: 1.5;
-      background: var(--surface-2);
-      transition: border-color 0.2s;
-    }
-    .journal-inline:focus {
-      outline: none;
-      border-color: var(--sage-700);
-      background: var(--surface);
-    }
-    .journal-inline:focus-visible { box-shadow: var(--focus-ring); }
-    .journal-inline::placeholder { color: var(--ink-300); }
-
-    /* ── Sober buttons ──────────────────────────────────── */
-    .sober-options {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-    .btn-sober {
-      width: 100%;
-      padding: 18px;
-      border-radius: var(--radius-md);
-      border: none;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      font-family: inherit;
-    }
-    .btn-sober:active { transform: scale(0.97); }
-    .btn-sober:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-    .btn-yes {
-      background: var(--sage-700);
-      color: #fff;
-    }
-    .btn-yes:hover { background: var(--sage-600); }
-    .btn-slip {
-      background: var(--alert-200);
-      color: var(--alert-600);
-      font-size: 15px;
-      font-weight: 600;
-      padding: 14px;
-    }
-    .btn-slip:hover { background: #f0c8c2; }
-
-    /* ── Textarea (step 3) ──────────────────────────────── */
-    .journal-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--ink-700);
-      margin-bottom: 10px;
-    }
-    textarea {
-      width: 100%;
-      border: 1.5px solid var(--sage-100);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-      font-size: 16px;
-      font-family: 'Inter', inherit;
-      color: var(--ink-900);
-      resize: none;
-      line-height: 1.6;
-      transition: border-color 0.2s;
-      background: var(--surface-2);
-      margin-bottom: 8px;
-    }
-    textarea:focus {
-      outline: none;
-      border-color: var(--sage-700);
-      background: var(--surface);
-    }
-    textarea:focus-visible { box-shadow: var(--focus-ring); }
-    textarea::placeholder { color: var(--ink-300); }
-    .char-count {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ink-300);
-      text-align: right;
-      margin-bottom: 24px;
-    }
-
-    /* ── Compassion box ─────────────────────────────────── */
-    .compassion-box {
-      background: var(--warn-50);
-      border-left: 4px solid var(--accent);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
-      margin-bottom: 24px;
-      font-size: 15px;
-      line-height: 1.65;
-      color: var(--ink-700);
-    }
-
-    /* ── Buttons ────────────────────────────────────────── */
-
-    /* Primary */
-    .btn-primary {
-      width: 100%;
-      padding: 17px;
-      border-radius: var(--radius-pill);
-      border: none;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: not-allowed;
-      background: var(--ink-300);
-      color: #fff;
-      transition: background 0.3s var(--ease), transform 0.2s var(--ease), box-shadow 0.3s var(--ease);
-      letter-spacing: 0;
-      -webkit-tap-highlight-color: transparent;
-      margin-top: auto;
-      font-family: 'Inter', inherit;
-    }
-    .btn-primary .arrow {
-      display: inline-block;
-      transition: transform 0.2s var(--ease);
-    }
-    .btn-primary.ready {
-      background: var(--sage-700);
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(47,85,80,.2);
-    }
-    .btn-primary.ready:hover {
-      background: var(--sage-600);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(47,85,80,.28);
-    }
-    .btn-primary.ready:hover .arrow { transform: translateX(4px); }
-    .btn-primary.ready:active { transform: scale(0.97); }
-    .btn-primary.ready:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-    /* Non-mood-gated primary buttons (always active) */
-    .btn-primary.always-ready {
-      background: var(--sage-700);
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(47,85,80,.2);
-    }
-    .btn-primary.always-ready:hover {
-      background: var(--sage-600);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(47,85,80,.28);
-    }
-    .btn-primary.always-ready:active { transform: scale(0.97); }
-    .btn-primary.always-ready:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-
-    /* Supportive */
-    .btn-supportive {
-      background: none;
-      border: none;
-      color: var(--ink-500);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 12px;
-      text-align: center;
-      font-family: 'Inter', inherit;
-      padding: 8px;
-    }
-    .btn-supportive:hover { color: var(--ink-700); }
-    .btn-supportive:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-      border-radius: var(--radius-sm);
-    }
-
-    /* ── Complete screen ────────────────────────────────── */
-    .complete-icon { font-size: 52px; text-align: center; margin-bottom: 16px; }
-    .milestone-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--good-50);
-      border: 1.5px solid #c8dcce;
-      border-radius: var(--radius-pill);
-      padding: 6px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--sage-700);
-      margin-bottom: 20px;
-    }
-    .complete-streak {
+    /* ── Streak hero card ──────────────────────────────── */
+    .hero-num {
       font-family: 'Fraunces', serif;
       font-size: 96px;
       font-weight: 600;
       letter-spacing: -0.03em;
-      color: var(--sage-700);
-      text-align: center;
       line-height: 1;
-      margin-bottom: 4px;
+      color: var(--sage-700);
+      margin-bottom: 2px;
     }
-    .complete-streak-label {
-      font-size: 16px;
+    .hero-label {
+      font-size: 15px;
+      font-weight: 500;
       color: var(--ink-500);
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .summary-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-top: 1px solid var(--sage-50);
-      font-size: 15px;
-      color: var(--ink-700);
-    }
-    .summary-row .summary-emoji { font-size: 20px; }
-    .summary-row strong { color: var(--ink-900); }
-
-    .save-error {
-      min-height: 1.2em;
-      font-size: 14px;
-      color: #b45309;
-      text-align: center;
-      margin: 8px 0 4px;
-    }
-
-    /* ── Loading state ─────────────────────────────────── */
-    .checkin-loading {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      color: var(--ink-400, #9ca3af);
-      font-size: 15px;
-    }
-    .checkin-loading-spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--sage-100, #d1fae5);
-      border-top-color: var(--sage-500, #10b981);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Already checked in ────────────────────────────── */
-    .checkin-done-today {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 12px;
-      padding: 24px 0;
-    }
-    .checkin-done-today[hidden] { display: none; }
-    .checkin-done-icon { font-size: 48px; }
-    .checkin-done-today h2 {
-      font-family: 'Fraunces', serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--ink-900);
-      margin: 0;
-    }
-    .checkin-done-today p {
-      font-size: 15px;
-      color: var(--ink-500, #6b7280);
-      margin: 0;
-    }
-
-    .slip-complete-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
-    .slip-heading {
-      font-family: 'Fraunces', serif;
-      font-size: 26px;
-      font-weight: 600;
-      letter-spacing: -0.015em;
       margin-bottom: 10px;
-      color: var(--ink-900);
     }
-    .slip-message {
-      font-size: 16px;
-      color: var(--ink-700);
-      line-height: 1.65;
-      margin-bottom: 24px;
-    }
-
-    /* Reset button in slip complete */
-    .btn-reset-streak {
-      background: var(--alert-200);
-      color: var(--alert-600);
-      border: 1.5px solid #e0aea8;
-      border-radius: var(--radius-md);
-      padding: 14px 24px;
+    .hero-tone {
       font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      margin-bottom: 12px;
-      font-family: 'Inter', inherit;
-    }
-    .btn-reset-streak:hover { background: #f0c8c2; }
-    .btn-reset-streak:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--alert-600);
+      line-height: 1.65;
+      color: var(--ink-700);
+      margin-bottom: 16px;
     }
 
-    /* ── Spacer ─────────────────────────────────────────── */
-    .spacer { flex: 1; }
-
-    /* ── Dev controls (hidden by default) ──────────────── */
-    .dev-controls {
-      display: none;
-      margin: 12px 16px 0;
-      border: 1px dashed rgba(107,127,135,.45);
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,.65);
-      padding: 0 12px;
-    }
-    .dev-controls.visible { display: block; }
-    .dev-controls summary {
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--ink-300);
-      padding: 10px 0;
-      list-style: none;
-    }
-    .dev-controls summary::-webkit-details-marker { display: none; }
-    .dev-controls summary:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-    .dev-controls-inner { padding-bottom: 12px; }
-    .dev-controls label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+    /* ── Progress bar ──────────────────────────────────── */
+    .progress-bar-wrap { margin-bottom: 16px; }
+    .progress-bar-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 500;
       color: var(--ink-300);
       margin-bottom: 6px;
     }
-    .dev-controls select {
-      width: 100%;
-      border: 1.5px solid var(--sage-100);
-      border-radius: var(--radius-sm);
-      background: var(--surface);
+    .progress-bar-track {
+      height: 5px;
+      background: var(--sage-50);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--sage-700);
+      border-radius: var(--radius-pill);
+      transition: width 0.6s var(--ease);
+    }
+
+    /* ── Inline link ───────────────────────────────────── */
+    .hero-link {
       font-size: 14px;
+      font-weight: 600;
+      color: var(--sage-700);
+      text-decoration: none;
+      display: inline-block;
+    }
+    .hero-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .hero-link:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+      border-radius: 3px;
+    }
+
+    /* ── Check-in card ─────────────────────────────────── */
+    .checkin-loading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink-300);
+      font-size: 14px;
+    }
+    .checkin-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--sage-100);
+      border-top-color: var(--sage-700);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    .checkin-cta-heading {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 600;
       color: var(--ink-900);
-      font-family: inherit;
-      padding: 10px 12px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .btn-checkin {
+      display: block;
+      width: 100%;
+      padding: 17px;
+      border-radius: var(--radius-pill);
+      background: var(--sage-700);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0 4px 16px rgba(47,85,80,.2);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      font-family: 'Inter', inherit;
+    }
+    .btn-checkin:hover {
+      background: var(--sage-600);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(47,85,80,.28);
+    }
+    .btn-checkin:active { transform: scale(0.97); }
+    .btn-checkin:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    /* ── Check-in done state ───────────────────────────── */
+    .checkin-done-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .checkin-done-icon {
+      font-size: 36px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .checkin-done-heading {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink-900);
+      margin-bottom: 4px;
+    }
+    .checkin-done-sub {
+      font-size: 14px;
+      color: var(--ink-500);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── Personal why card ─────────────────────────────── */
+    .why-card {
+      background: var(--warn-50);
+      border: 1px solid #e8d5b0;
+    }
+    .why-card[hidden] { display: none; }
+    .why-text {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--ink-900);
+      margin: 0;
+      padding: 0;
+      border: none;
     }
   </style>
 </head>
 <body>
 <div id="app-init" aria-hidden="true"><div class="app-init-spinner"></div></div>
-<a class="skip-link" href="#check-in-main">Skip to check-in</a>
-<div class="shell">
+<a class="skip-link" href="#home-main">Skip to main content</a>
 
-  <!-- ── Compact header ──────────────────────────────────── -->
-  <header class="checkin-header" aria-label="Today">
-    <div class="header-left">
-      <span class="greeting-line" id="greeting-line">Good morning,</span>
-      <span class="streak-pill" id="topbar-streak">🌿 Day 47</span>
-      <span class="header-date" id="today-date"></span>
+<main id="home-main" class="shell">
+
+  <!-- ── Header ───────────────────────────────────────────── -->
+  <header class="home-header">
+    <div>
+      <p class="greeting" id="greeting">Good morning.</p>
+      <p class="header-date" id="today-date"></p>
     </div>
     <a class="sos-pill" href="sos.html" aria-label="Craving SOS — get support now">
       <span class="sos-dot" aria-hidden="true"></span>SOS
     </a>
   </header>
 
-  <p class="tone-note" id="streak-tone-note">
-    Steady momentum. You are showing up and building trust with yourself.
-  </p>
-
-  <!-- Dev controls — only visible with ?dev=1 -->
-  <details class="dev-controls" id="dev-controls">
-    <summary>Dev controls</summary>
-    <div class="dev-controls-inner">
-      <label for="streak-select">Streak state</label>
-      <select id="streak-select" aria-label="Select streak day for prototype">
-        <option value="1">Day 1</option>
-        <option value="7">Day 7</option>
-        <option value="30">Day 30</option>
-        <option value="47" selected>Day 47</option>
-        <option value="365">Day 365</option>
-      </select>
-    </div>
-  </details>
-
-  <!-- Progress dots -->
-  <div class="progress" id="progress-dots" aria-hidden="true"></div>
-
-  <!-- Card -->
-  <main class="card" id="check-in-main">
-
-    <!-- ── Loading state ─────────────────────────────────── -->
-    <div class="checkin-loading" id="checkin-loading" aria-label="Loading" aria-live="polite">
-      <div class="checkin-loading-spinner" aria-hidden="true"></div>
-      <p>Just a moment…</p>
-    </div>
-
-    <!-- ── Already checked in today ──────────────────────── -->
-    <div class="checkin-done-today" id="checkin-done-today" hidden>
-      <div class="checkin-done-icon">🌿</div>
-      <h2>You've already checked in today.</h2>
-      <p>Come back tomorrow — you're doing great.</p>
-      <a class="btn-primary always-ready" href="streak.html" style="display:inline-block; text-align:center; text-decoration:none; margin-top:8px;">See my streak →</a>
-    </div>
-
-    <!-- ── Step 1: Mood ─────────────────────────────────── -->
-    <div class="step" id="step-1">
-      <p class="step-eyebrow">Daily Check-In</p>
-      <h1>Hey. How are you feeling today?</h1>
-      <p class="sub" id="step1-sub">No right or wrong answer — just check in with yourself.</p>
-
-      <div class="mood-grid" role="radiogroup" aria-label="Select your mood">
-        <button type="button" class="mood-btn" data-mood="rough" aria-pressed="false" role="radio" aria-checked="false">
-          <span class="emoji" aria-hidden="true">😔</span><span class="label">Rough</span>
-        </button>
-        <button type="button" class="mood-btn" data-mood="tough" aria-pressed="false" role="radio" aria-checked="false">
-          <span class="emoji" aria-hidden="true">🥺</span><span class="label">Tough</span>
-        </button>
-        <button type="button" class="mood-btn" data-mood="okay" aria-pressed="false" role="radio" aria-checked="false">
-          <span class="emoji" aria-hidden="true">😐</span><span class="label">Okay</span>
-        </button>
-        <button type="button" class="mood-btn" data-mood="good" aria-pressed="false" role="radio" aria-checked="false">
-          <span class="emoji" aria-hidden="true">🙂</span><span class="label">Good</span>
-        </button>
-        <button type="button" class="mood-btn" data-mood="great" aria-pressed="false" role="radio" aria-checked="false">
-          <span class="emoji" aria-hidden="true">😌</span><span class="label">Great</span>
-        </button>
+  <!-- ── Streak hero ──────────────────────────────────────── -->
+  <section class="card streak-hero" aria-labelledby="streak-hero-heading">
+    <p class="card-eyebrow" id="streak-hero-heading">Current streak</p>
+    <div class="hero-num" id="hero-num">—</div>
+    <p class="hero-label" id="hero-label">days sober</p>
+    <p class="hero-tone" id="hero-tone">You are building trust with yourself, one day at a time.</p>
+    <div class="progress-bar-wrap" aria-hidden="true">
+      <div class="progress-bar-meta">
+        <span id="progress-from">—</span>
+        <span id="progress-to">—</span>
       </div>
-
-      <!-- Optional inline journal reveal -->
-      <div class="journal-reveal" id="inline-journal-wrap" aria-hidden="true">
-        <label class="journal-inline-label" for="inline-journal">One line, if you want to</label>
-        <textarea
-          class="journal-inline"
-          id="inline-journal"
-          rows="2"
-          maxlength="280"
-          placeholder="What's on your mind today?"
-          aria-label="Optional one-line note"
-          tabindex="-1"
-        ></textarea>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
       </div>
+    </div>
+    <a class="hero-link" href="streak.html">View full streak →</a>
+  </section>
 
-      <div class="spacer"></div>
-      <button class="btn-primary" id="btn-mood-next" disabled aria-disabled="true">
-        Next <span class="arrow">→</span>
-      </button>
-      <button class="btn-supportive" id="btn-mood-skip">Skip mood</button>
+  <!-- ── Today's check-in ─────────────────────────────────── -->
+  <section class="card" aria-labelledby="checkin-card-heading">
+    <p class="card-eyebrow" id="checkin-card-heading">Today</p>
+
+    <!-- Loading -->
+    <div class="checkin-loading" id="checkin-loading">
+      <div class="checkin-spinner" aria-hidden="true"></div>
+      <span>Just a moment…</span>
     </div>
 
-    <!-- ── Step 2: Sober confirmation ──────────────────── -->
-    <div class="step" id="step-2">
-      <p class="step-eyebrow">Daily Check-In</p>
-      <h1>Was today a sober day?</h1>
-      <p class="sub">Whatever the answer, it matters that you're here checking in.</p>
-
-      <div class="sober-options">
-        <button class="btn-sober btn-yes" id="btn-yes">
-          Yes — today was sober ✓
-        </button>
-        <button class="btn-sober btn-slip" id="btn-slip">
-          I had a slip today
-        </button>
-      </div>
-      <div class="spacer"></div>
+    <!-- Not yet checked in -->
+    <div id="checkin-todo" hidden>
+      <p class="checkin-cta-heading">How are you doing today?</p>
+      <a class="btn-checkin" href="checkin.html">Check in today →</a>
     </div>
 
-    <!-- ── Step 3a: Journal (sober) ─────────────────────── -->
-    <div class="step" id="step-3a">
-      <p class="step-eyebrow">Daily Check-In</p>
-      <h1>Anything you want to note?</h1>
-      <p class="sub">Optional — even one word is enough.</p>
-
-      <label class="journal-label" for="journal-sober">Your note (optional)</label>
-      <textarea
-        id="journal-sober"
-        rows="5"
-        maxlength="280"
-        placeholder="Feeling stronger than I expected today. Had a craving around 3pm but it passed…"
-        aria-label="Optional journal note"
-      ></textarea>
-      <div class="char-count"><span id="count-sober">0</span> / 280</div>
-
-      <div class="spacer"></div>
-      <button class="btn-primary always-ready" id="btn-journal-done">Save check-in</button>
-      <button class="btn-supportive" id="btn-journal-skip">Skip note</button>
-    </div>
-
-    <!-- ── Step 3b: Journal (slip) ──────────────────────── -->
-    <div class="step" id="step-3b">
-      <p class="step-eyebrow">Daily Check-In</p>
-      <h1>Thank you for being honest.</h1>
-
-      <div class="compassion-box">
-        Logging a slip takes real courage. It means you're still here, still trying — and that's everything. Every day you've built doesn't disappear. Your journey is still yours.
-      </div>
-
-      <label class="journal-label" for="journal-slip">Want to add anything? (optional)</label>
-      <textarea
-        id="journal-slip"
-        rows="4"
-        maxlength="280"
-        placeholder="What was going on today? What might help tomorrow?"
-        aria-label="Optional note about your slip"
-      ></textarea>
-      <div class="char-count"><span id="count-slip">0</span> / 280</div>
-
-      <div class="spacer"></div>
-      <button class="btn-primary always-ready" id="btn-slip-done">Save check-in</button>
-      <button class="btn-supportive" id="btn-slip-skip">Skip note</button>
-    </div>
-
-    <!-- ── Step 4a: Complete (sober) ────────────────────── -->
-    <div class="step" id="step-4a">
-      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-        <div class="complete-icon">🌿</div>
-        <div class="milestone-badge" id="milestone-badge">🎉 Day 47 — Keep going</div>
-        <div class="complete-streak" id="complete-streak">47</div>
-        <div class="complete-streak-label" id="complete-streak-label">days sober</div>
-        <p class="sub" id="complete-tone-message" style="text-align:center; margin-bottom:20px;">
-          Quiet progress is still powerful progress.
-        </p>
-
-        <div style="width:100%; text-align:left; margin-top:8px;">
-          <div class="summary-row" id="summary-mood-row">
-            <span class="summary-emoji" id="summary-mood-emoji">😐</span>
-            <span>Feeling <strong id="summary-mood-label">okay</strong> today</span>
-          </div>
-          <div class="summary-row">
-            <span class="summary-emoji">✅</span>
-            <span><strong>Sober day confirmed</strong></span>
-          </div>
-          <div class="summary-row" id="summary-note-row" style="display:none">
-            <span class="summary-emoji">📝</span>
-            <span><strong>Note saved</strong></span>
-          </div>
+    <!-- Already checked in -->
+    <div id="checkin-done" hidden>
+      <div class="checkin-done-row">
+        <span class="checkin-done-icon" aria-hidden="true">🌿</span>
+        <div>
+          <p class="checkin-done-heading">Checked in today</p>
+          <p class="checkin-done-sub">
+            <span id="checkin-mood-emoji" aria-hidden="true"></span>
+            <span id="checkin-sober-label"></span>
+          </p>
         </div>
       </div>
-
-      <p class="save-error" id="save-error-sober" role="alert" aria-live="polite"></p>
-      <button class="btn-primary always-ready" id="btn-done-sober" style="margin-top:28px;">Done</button>
+      <a class="hero-link" href="streak.html" style="margin-top:16px; display:block;">View my streak →</a>
     </div>
+  </section>
 
-    <!-- ── Step 4b: Complete (slip) ─────────────────────── -->
-    <div class="step" id="step-4b">
-      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top:16px;">
-        <div class="slip-complete-icon">🫂</div>
-        <p class="slip-heading">You showed up today.</p>
-        <p class="slip-message">
-          That's not nothing — that's everything.<br><br>
-          Tomorrow is a new start. When you're ready, you can reset your streak. Or just take it one hour at a time.
-        </p>
-        <p class="save-error" id="save-error-slip" role="alert" aria-live="polite"></p>
-        <button class="btn-reset-streak" id="btn-reset-streak">Reset my streak</button>
-        <button class="btn-primary always-ready" id="btn-done-slip">I'll wait — keep my streak</button>
-      </div>
-    </div>
+  <!-- ── Personal why ─────────────────────────────────────── -->
+  <section class="card why-card" id="why-card" hidden aria-labelledby="why-heading">
+    <p class="card-eyebrow" id="why-heading">Your why</p>
+    <blockquote class="why-text" id="why-text"></blockquote>
+  </section>
 
-  </main><!-- /card -->
-</div><!-- /shell -->
+</main>
 
 <nav class="bottom-nav" aria-label="Primary navigation">
   <a class="tab active" href="index.html" aria-current="page">
-    <span class="tab-icon" aria-hidden="true">○</span>
-    <span class="tab-label">Check-In</span>
+    <span class="tab-icon" aria-hidden="true">⌂</span>
+    <span class="tab-label">Home</span>
   </a>
   <a class="tab tab-sos" href="sos.html" aria-label="Craving SOS — get support now">
     <span class="tab-label">SOS</span>
@@ -838,7 +358,7 @@
 <script type="module">
   import { supabase } from './supabase.js';
 
-  // ── Auth init: nothing renders until session is known ─
+  // ── Auth guard ─────────────────────────────────────────────
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
     window.location.replace('onboarding.html');
@@ -847,357 +367,110 @@
   document.getElementById('app-init').remove();
 
   const profileId = localStorage.getItem('profileId') || session.user.id;
+  const todayISO = new Date().toLocaleDateString('en-CA');
 
-  // ── Dev controls via query param ───────────────────────
-  if (location.search.includes('dev=1')) {
-    document.getElementById('dev-controls').classList.add('visible');
-  }
-
-  // ── State ──────────────────────────────────────────────
-  const state = {
-    mood: null,
-    sober: null,
-    note: '',
-    currentStreak: 47
-  };
-
-  const moodMeta = {
-    rough: { emoji: '😔', label: 'rough' },
-    tough: { emoji: '🥺', label: 'tough' },
-    okay:  { emoji: '😐', label: 'okay'  },
-    good:  { emoji: '🙂', label: 'good'  },
-    great: { emoji: '😌', label: 'great' }
-  };
-
-  const streakMeta = {
-    1: {
-      badgeIcon: '🌱',
-      badgeText: 'Day 1 - A brave fresh start',
-      topbarIcon: '🌱',
-      step1Sub: 'Today can be simple. A quick check-in is enough.',
-      toneNote: 'Gentle start. One honest check-in is a real win today.',
-      completeTone: 'Day 1 counts. You showed up for yourself today.'
-    },
-    7: {
-      badgeIcon: '🌤️',
-      badgeText: 'Day 7 - One full week',
-      topbarIcon: '🌤️',
-      step1Sub: 'A week in - keep checking in one day at a time.',
-      toneNote: 'Building rhythm. Small daily steps are adding up.',
-      completeTone: 'One week is meaningful progress. Keep protecting your peace.'
-    },
-    30: {
-      badgeIcon: '🏅',
-      badgeText: 'Day 30 - One month strong',
-      topbarIcon: '🏅',
-      step1Sub: 'A month of effort behind you. How are you feeling right now?',
-      toneNote: 'Strong momentum. You have built real consistency.',
-      completeTone: 'Thirty days is a big milestone. Be proud of this month.'
-    },
-    47: {
-      badgeIcon: '🎉',
-      badgeText: 'Day 47 - Keep going',
-      topbarIcon: '🌿',
-      step1Sub: 'No right or wrong answer - just check in with yourself.',
-      toneNote: 'Steady momentum. You are showing up and building trust with yourself.',
-      completeTone: 'Quiet progress is still powerful progress.'
-    },
-    365: {
-      badgeIcon: '🥳',
-      badgeText: 'Day 365 - One full year',
-      topbarIcon: '🥳',
-      step1Sub: 'One year in recovery. Take a moment to feel how far you have come.',
-      toneNote: 'Celebration day. A full year of choosing yourself, one day at a time.',
-      completeTone: 'A full year. This is huge, and you earned every single day.'
-    }
-  };
-
-  // ── Date / greeting ────────────────────────────────────
+  // ── Greeting + date ────────────────────────────────────────
   document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US', {
-    weekday: 'short', month: 'short', day: 'numeric'
+    weekday: 'long', month: 'long', day: 'numeric'
   });
 
   function setGreeting(name) {
     const h = new Date().getHours();
-    const suffix = name ? ` ${name}.` : '.';
-    const el = document.getElementById('greeting-line');
-    if (h < 12) el.textContent = `Good morning,${suffix}`;
-    else if (h < 17) el.textContent = `Good afternoon,${suffix}`;
-    else el.textContent = `Good evening,${suffix}`;
+    const suffix = name ? `, ${name}.` : '.';
+    const el = document.getElementById('greeting');
+    if (h < 12)       el.textContent = `Good morning${suffix}`;
+    else if (h < 17)  el.textContent = `Good afternoon${suffix}`;
+    else              el.textContent = `Good evening${suffix}`;
+  }
+  setGreeting(null);
+
+  // ── Streak helpers ─────────────────────────────────────────
+  const MILESTONES = [1, 7, 30, 90, 365];
+
+  function getNextMilestone(d) { return MILESTONES.find(m => m > d) || null; }
+  function getPrevMilestone(d) {
+    const passed = MILESTONES.filter(m => m <= d);
+    return passed.length ? passed[passed.length - 1] : 0;
   }
 
-  const streakSelect = document.getElementById('streak-select');
-
-  function metaForDay(d) {
-    if (streakMeta[d]) return streakMeta[d];
-    if (d >= 365) return { ...streakMeta[365], badgeText: `Day ${d} — Incredible` };
-    if (d >= 90)  return { ...streakMeta[90],  badgeText: `Day ${d} — Deep momentum` };
-    if (d >= 30)  return { ...streakMeta[30],  badgeText: `Day ${d} — Keep going` };
-    if (d >= 7)   return { ...streakMeta[7],   badgeText: `Day ${d} — Keep going` };
-    return { ...streakMeta[1], badgeText: `Day ${d} — Keep going` };
+  function toneForDay(d) {
+    if (d <= 0)   return 'The journey starts now. One moment at a time.';
+    if (d === 1)  return 'Day 1 counts. You showed up for yourself today.';
+    if (d < 7)   return 'Gentle start. One honest day at a time — that\'s enough.';
+    if (d < 30)  return 'Building rhythm. Small daily steps are adding up.';
+    if (d < 90)  return 'Steady momentum. You are showing up and building trust with yourself.';
+    if (d < 365) return 'Deep commitment. The work you\'ve put in is real and lasting.';
+    return 'A full year. This is huge, and you earned every single day.';
   }
 
-  function renderStreakState(day) {
-    const d = Number(day);
-    const meta = metaForDay(d);
-    state.currentStreak = d;
-    document.getElementById('topbar-streak').textContent = `${meta.topbarIcon} Day ${d}`;
-    document.getElementById('streak-tone-note').textContent = meta.toneNote;
-    document.getElementById('step1-sub').textContent = meta.step1Sub;
-    document.getElementById('milestone-badge').textContent = `${meta.badgeIcon} ${meta.badgeText}`;
-    document.getElementById('complete-streak').textContent = String(d);
-    document.getElementById('complete-streak-label').textContent = d === 1 ? 'day sober' : 'days sober';
-    document.getElementById('complete-tone-message').textContent = meta.completeTone;
+  function renderStreak(day) {
+    const d = Math.max(0, day);
+    document.getElementById('hero-num').textContent = String(d);
+    document.getElementById('hero-label').textContent = d === 1 ? 'day sober' : 'days sober';
+    document.getElementById('hero-tone').textContent = toneForDay(d);
+
+    const next = getNextMilestone(d);
+    const prev = getPrevMilestone(d);
+    if (next) {
+      const pct = d <= prev ? 0 : Math.round(((d - prev) / (next - prev)) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-from').textContent = `Day ${d}`;
+      document.getElementById('progress-to').textContent = `Next: Day ${next}`;
+    } else {
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('progress-from').textContent = `Day ${d}`;
+      document.getElementById('progress-to').textContent = '🎉 All milestones';
+    }
   }
 
-  streakSelect.addEventListener('change', e => renderStreakState(e.target.value));
-  renderStreakState(streakSelect.value);
+  // ── Mood emoji map ─────────────────────────────────────────
+  const moodEmoji = { rough: '😔', tough: '🥺', okay: '😐', good: '🙂', great: '😌' };
 
-  // ── Live data from Supabase ────────────────────────────
-  const loadingEl   = document.getElementById('checkin-loading');
-  const doneTodayEl = document.getElementById('checkin-done-today');
-
-  async function loadTodayCheckin() {
-    const todayISO = new Date().toLocaleDateString('en-CA');
-    const { data } = await supabase
-      .from('checkins')
-      .select('id')
+  // ── Parallel data fetch ────────────────────────────────────
+  const [profileResult, checkinResult] = await Promise.all([
+    supabase.from('profiles')
+      .select('name, sobriety_start_date, personal_why')
+      .eq('id', profileId)
+      .single(),
+    supabase.from('checkins')
+      .select('id, sober, mood')
       .eq('profile_id', profileId)
       .eq('checked_in_at', todayISO)
-      .maybeSingle();
+      .maybeSingle()
+  ]);
 
-    // Hide loading state regardless of result
-    loadingEl.style.display = 'none';
+  // ── Hide loading ───────────────────────────────────────────
+  document.getElementById('checkin-loading').style.display = 'none';
 
-    if (data) {
-      // Already checked in today — show done-today message
-      doneTodayEl.hidden = false;
-      // Also hide progress dots (they belong to the form flow)
-      document.getElementById('progress-dots').style.display = 'none';
-    } else {
-      // Not yet checked in — reveal the form at Step 1
-      document.getElementById('step-1').classList.add('active');
+  // ── Render profile data ────────────────────────────────────
+  const profile = profileResult.data;
+  if (profile) {
+    setGreeting(profile.name);
+    if (profile.sobriety_start_date) {
+      const diffDays = Math.floor(
+        (Date.now() - new Date(profile.sobriety_start_date).getTime()) / 86400000
+      );
+      renderStreak(Math.max(0, diffDays));
+    }
+    if (profile.personal_why) {
+      document.getElementById('why-text').textContent = profile.personal_why;
+      document.getElementById('why-card').hidden = false;
     }
   }
 
-  async function initFromSupabase() {
-    if (!profileId) return;
-
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('name, sobriety_start_date')
-      .eq('id', profileId)
-      .single();
-    if (error || !profile) {
-      setGreeting();
-    } else {
-      setGreeting(profile.name);
-      // Calculate real streak and re-render
-      if (profile.sobriety_start_date) {
-        const start = new Date(profile.sobriety_start_date);
-        const diffDays = Math.floor((Date.now() - start.getTime()) / 86400000);
-        renderStreakState(Math.max(0, diffDays));
-      }
-    }
-
-    // Today-guard: always runs, reveals form or done-today message
-    await loadTodayCheckin();
+  // ── Render check-in status ─────────────────────────────────
+  const checkin = checkinResult.data;
+  if (checkin) {
+    const emoji = checkin.mood ? (moodEmoji[checkin.mood] || '') : '';
+    const moodEl = document.getElementById('checkin-mood-emoji');
+    moodEl.textContent = emoji;
+    moodEl.hidden = !emoji;
+    document.getElementById('checkin-sober-label').textContent =
+      checkin.sober ? 'Sober day confirmed ✓' : 'You showed up today';
+    document.getElementById('checkin-done').hidden = false;
+  } else {
+    document.getElementById('checkin-todo').hidden = false;
   }
-  initFromSupabase();
-
-  // ── Progress dots ──────────────────────────────────────
-  const TOTAL_STEPS = 4;
-  const dotsEl = document.getElementById('progress-dots');
-  for (let i = 0; i < TOTAL_STEPS; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    dotsEl.appendChild(d);
-  }
-
-  function setDots(activeIdx) {
-    dotsEl.querySelectorAll('.dot').forEach((d, i) => {
-      d.className = 'dot' + (i < activeIdx ? ' done' : i === activeIdx ? ' active' : '');
-    });
-  }
-
-  function showStep(id, dotIdx) {
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    setDots(dotIdx);
-  }
-
-  // ── Step 1: Mood ───────────────────────────────────────
-  const moodBtns    = document.querySelectorAll('.mood-btn');
-  const btnMoodNext = document.getElementById('btn-mood-next');
-  const journalWrap = document.getElementById('inline-journal-wrap');
-  const inlineJournal = document.getElementById('inline-journal');
-
-  moodBtns.forEach((btn, idx) => {
-    btn.addEventListener('click', () => {
-      moodBtns.forEach(b => {
-        b.setAttribute('aria-pressed', 'false');
-        b.setAttribute('aria-checked', 'false');
-      });
-      btn.setAttribute('aria-pressed', 'true');
-      btn.setAttribute('aria-checked', 'true');
-      state.mood = btn.dataset.mood;
-
-      // Activate Next button
-      btnMoodNext.disabled = false;
-      btnMoodNext.removeAttribute('aria-disabled');
-      btnMoodNext.classList.add('ready');
-
-      // Reveal inline journal
-      journalWrap.classList.add('visible');
-      journalWrap.removeAttribute('aria-hidden');
-      inlineJournal.removeAttribute('tabindex');
-    });
-
-    // Keyboard: left/right arrow navigation
-    btn.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        const next = moodBtns[(idx + 1) % moodBtns.length];
-        next.focus();
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        const prev = moodBtns[(idx - 1 + moodBtns.length) % moodBtns.length];
-        prev.focus();
-      }
-    });
-  });
-
-  btnMoodNext.addEventListener('click', () => {
-    if (!btnMoodNext.disabled) showStep('step-2', 1);
-  });
-
-  document.getElementById('btn-mood-skip').addEventListener('click', () => {
-    state.mood = null;
-    showStep('step-2', 1);
-  });
-
-  // ── Step 2: Sober ──────────────────────────────────────
-  document.getElementById('btn-yes').addEventListener('click', () => {
-    state.sober = true;
-    showStep('step-3a', 2);
-  });
-  document.getElementById('btn-slip').addEventListener('click', () => {
-    state.sober = false;
-    showStep('step-3b', 2);
-  });
-
-  // ── Step 3a: Journal (sober) ───────────────────────────
-  const journalSober = document.getElementById('journal-sober');
-  const countSober   = document.getElementById('count-sober');
-
-  journalSober.addEventListener('input', () => {
-    countSober.textContent = journalSober.value.length;
-    state.note = journalSober.value.trim();
-  });
-
-  document.getElementById('btn-journal-done').addEventListener('click', () => finishSober());
-  document.getElementById('btn-journal-skip').addEventListener('click', () => finishSober());
-
-  function finishSober() {
-    const mm = moodMeta[state.mood];
-    if (mm) {
-      document.getElementById('summary-mood-emoji').textContent = mm.emoji;
-      document.getElementById('summary-mood-label').textContent = mm.label;
-    } else {
-      document.getElementById('summary-mood-row').style.display = 'none';
-    }
-    if (state.note || journalSober.value.trim()) {
-      document.getElementById('summary-note-row').style.display = 'flex';
-    }
-    showStep('step-4a', 3);
-  }
-
-  // ── Step 3b: Journal (slip) ────────────────────────────
-  const journalSlip = document.getElementById('journal-slip');
-  const countSlip   = document.getElementById('count-slip');
-
-  journalSlip.addEventListener('input', () => {
-    countSlip.textContent = journalSlip.value.length;
-  });
-
-  document.getElementById('btn-slip-done').addEventListener('click', () => showStep('step-4b', 3));
-  document.getElementById('btn-slip-skip').addEventListener('click', () => showStep('step-4b', 3));
-
-  // ── saveCheckin ────────────────────────────────────────
-  async function saveCheckin(isSober) {
-    const todayISO = new Date().toLocaleDateString('en-CA');
-    const btn   = document.getElementById(isSober ? 'btn-done-sober' : 'btn-done-slip');
-    const errEl = document.getElementById(isSober ? 'save-error-sober' : 'save-error-slip');
-    const originalText = btn.textContent;
-
-    btn.disabled = true;
-    btn.textContent = 'Saving…';
-    errEl.textContent = '';
-
-    const { error } = await supabase.from('checkins').insert({
-      profile_id:    profileId,
-      checked_in_at: todayISO,
-      sober:         isSober,
-      mood:          state.mood ?? null,
-      note:          state.note || null,
-    });
-
-    if (error) {
-      errEl.textContent = error.code === '23505'
-        ? "Looks like you've already checked in today 🌿"
-        : 'Something went wrong. Please check your connection and try again.';
-      btn.disabled = false;
-      btn.textContent = originalText;
-      return;
-    }
-
-    window.location.href = 'streak.html';
-  }
-
-  // ── Step 4a / 4b: Done ────────────────────────────────
-  document.getElementById('btn-done-sober').addEventListener('click', () => saveCheckin(true));
-  document.getElementById('btn-done-slip').addEventListener('click',  () => saveCheckin(false));
-
-  document.getElementById('btn-reset-streak').addEventListener('click', async () => {
-    const todayISO  = new Date().toLocaleDateString('en-CA');
-    const resetBtn  = document.getElementById('btn-reset-streak');
-    const errEl     = document.getElementById('save-error-slip');
-
-    resetBtn.disabled = true;
-    resetBtn.textContent = 'Saving…';
-    errEl.textContent = '';
-
-    // 1. Insert check-in (slip) — ignore 23505 if user already checked in today
-    const { error: checkinError } = await supabase.from('checkins').insert({
-      profile_id:    profileId,
-      checked_in_at: todayISO,
-      sober:         false,
-      mood:          state.mood ?? null,
-      note:          state.note || null,
-    });
-
-    if (checkinError && checkinError.code !== '23505') {
-      errEl.textContent = 'Something went wrong. Please check your connection and try again.';
-      resetBtn.disabled = false;
-      resetBtn.textContent = 'Reset my streak';
-      return;
-    }
-
-    // 2. Reset streak — inline, same pattern as streak.html
-    const { error: resetError } = await supabase
-      .from('profiles')
-      .update({ sobriety_start_date: todayISO })
-      .eq('id', profileId);
-
-    if (resetError) {
-      errEl.textContent = 'Check-in saved, but streak reset failed. Please try again.';
-      resetBtn.disabled = false;
-      resetBtn.textContent = 'Reset my streak';
-      return;
-    }
-
-    window.location.href = 'streak.html';
-  });
 </script>
 </body>
 </html>
