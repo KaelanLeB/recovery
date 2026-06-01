@@ -89,11 +89,11 @@ A prior version of this app was built in Replit. Claude Code should be aware of 
  
 ## Technical Context
  
-- **Platform:** Web app (browser-based)
-- **Stage:** Early prototype / pre-engineering
-- **Stack:** Not yet decided — Claude Code should default to simple HTML/CSS/JS for prototypes unless instructed otherwise
-- **Auth/Backend:** Not in scope for current prototyping phase — use placeholder data and static states
-- **Accessibility:** Aim for WCAG AA compliance in all prototypes — this user group may include people in distress
+- **Platform:** Web app (browser-based), deployed on GitHub Pages at `https://kaelanleb.github.io/recovery/`
+- **Stage:** Working prototype with live backend — Supabase is wired up, auth is live, data is persisted
+- **Stack:** Vanilla HTML/CSS/JS (no build step), Supabase JS SDK v2 (ES module from CDN), Google Fonts
+- **Auth/Backend:** Supabase anonymous auth is live. `profileId` in localStorage = `auth.user.id`. See Technical State section below.
+- **Accessibility:** Aim for WCAG AA compliance in all pages — this user group may include people in distress
 ---
  
 ## Prototyping Guidelines
@@ -112,13 +112,13 @@ When building prototypes in this project:
 These are product decisions not yet made. Claude Code should flag these when relevant rather than making assumptions.
  
 - [ ] App name
-- [ ] Whether the app requires user accounts / login (vs. anonymous local storage)
+- [x] Whether the app requires user accounts / login — **resolved:** Supabase anonymous auth (no email/password required, session persists across visits)
 - [ ] Whether to include community/peer features in a future phase
 - [ ] Monetisation model (free, freemium, subscription)
 - [ ] Whether to integrate with professional support or 12-step programs
 - [ ] Notification/reminder strategy (daily check-in prompts, milestone alerts)
 - [ ] How to handle relapse data sensitively (privacy implications)
-- [ ] How the app should store and track sobriety dates (local browser storage with no login, user account with database, or a hybrid approach)
+- [x] How the app should store and track sobriety dates — **resolved:** Supabase `profiles` table with `sobriety_start_date` (timestamptz), tied to anonymous auth session
 ---
  
 ## How to Work With Me (The PM)
@@ -169,7 +169,29 @@ When working on a UI/UX change, you can either let CLAUDE.md guide you (above) o
 
 ---
 
-## Technical State (as of 2026-05-24)
+## Technical State (as of 2026-05-31)
+
+### Page routing
+
+| File | Route | Purpose |
+|---|---|---|
+| `index.html` | `/` (root) | **Home screen** — streak hero, today's check-in status, personal why card. Authenticated entry point. |
+| `checkin.html` | `/checkin.html` | Daily check-in form — 4-step flow (mood → sober/slip → journal → complete). Reached via the home screen CTA. |
+| `streak.html` | `/streak.html` | Full streak tracker — live timer, milestones, recovery timeline, stats, reset. |
+| `sos.html` | `/sos.html` | Craving SOS — breathing circle, grounding prompts. Reachable one tap from any page. |
+| `onboarding.html` | `/onboarding.html` | First-time setup — 4-step intake (name, addiction type, sobriety start date, personal why). |
+| `supabase.js` | — | Supabase client init (shared by all pages via ES module import). |
+| `theme.css` | — | Design tokens, shell layout, bottom nav. Shared by all pages. |
+
+**Bottom nav:** Home (`index.html`) | SOS FAB (`sos.html`) | Streak (`streak.html`)
+
+**Auth guard pattern** on `index.html`, `checkin.html`, `streak.html`: top-level `await supabase.auth.getSession()` — if no session, redirect to `onboarding.html` and halt. Nothing renders until auth is known (no flash of wrong content).
+
+**Onboarding inverse guard:** if session already exists on load of `onboarding.html`, redirect to `index.html` immediately.
+
+### Personal why
+
+`profiles.personal_why` (text, nullable) is fetched on home screen load and displayed in a warm amber card below the streak hero. If null, the card is hidden. This is currently display-only — no edit UI exists yet.
 
 ### Database — Supabase project `asjgudrxgyrsydntqrak`
 
@@ -183,7 +205,7 @@ Supabase Anonymous Auth is wired through `onboarding.html`. On onboarding comple
 
 **`profileId` in localStorage** now equals `auth.user.id` (the anonymous auth UUID) — not a client-generated `crypto.randomUUID()`. Existing profiles created before this change (using `crypto.randomUUID()`) are legacy and will not have a matching auth session.
 
-`index.html` and `streak.html` call `supabase.auth.getSession()` on page load and redirect to `onboarding.html` if no session is found.
+`index.html`, `checkin.html`, and `streak.html` call `supabase.auth.getSession()` on page load and redirect to `onboarding.html` if no session is found.
 
 ### Row Level Security (RLS)
 
