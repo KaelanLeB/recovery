@@ -627,6 +627,67 @@
       margin: 12px 0;
       padding: 0 24px;
     }
+
+    /* ── Milestone celebration overlay ───────────────────── */
+    .milestone-overlay {
+      position: fixed;
+      inset: 0;
+      background: #f5f0e8;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 32px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .milestone-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .milestone-heading {
+      font-family: 'Fraunces', serif;
+      font-size: 40px;
+      color: #2C5F5D;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .milestone-message {
+      font-family: 'Inter', sans-serif;
+      font-size: 17px;
+      color: #555;
+      margin-bottom: 40px;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+    .milestone-continue {
+      background: #2C5F5D;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 16px 40px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ── Confetti pieces ──────────────────────────────────── */
+    .confetti-piece {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      opacity: 0;
+      animation: confetti-fall 2.5s ease-in forwards;
+    }
+    @keyframes confetti-fall {
+      0%   { opacity: 1; transform: translateY(-20px) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+    }
   </style>
 </head>
 <body>
@@ -846,6 +907,15 @@
       </div>
     </div>
 
+  <div class="milestone-overlay" id="milestone-overlay" role="dialog"
+       aria-modal="true" aria-labelledby="milestone-heading-text">
+    <h2 class="milestone-heading" id="milestone-heading-text"></h2>
+    <p class="milestone-message" id="milestone-message-text"></p>
+    <button class="milestone-continue" id="milestone-continue-btn">
+      Continue
+    </button>
+  </div>
+
   </main><!-- /card -->
 </div><!-- /shell -->
 
@@ -1038,6 +1108,54 @@
     // Today-guard: always runs, reveals form or done-today message
     await loadTodayCheckin();
   }
+
+  // ── Milestone celebration ──────────────────────────────
+  const MILESTONE_MOMENTS = {
+    1:   { heading: 'You Started',                         message: 'You don\'t need to have everything figured out, starting was enough.' },
+    7:   { heading: 'Keep Going',                          message: 'There were easier paths to take this week, and you chose this one.' },
+    30:  { heading: 'A Month of Courage',                  message: 'Some victories are invisible to everyone except the person who earned them.' },
+    90:  { heading: 'You\'ve Changed More Than You Think', message: 'The distance between who you were ninety days ago and who you are today is real.' },
+    365: { heading: 'This Year Belongs to You',            message: 'No one can take away the work, determination, and growth behind this milestone.' }
+  };
+
+  function launchConfetti() {
+    const colors = ['#2C5F5D', '#e8a87c', '#f5c6a0', '#a8c5c3', '#fff'];
+    for (let i = 0; i < 60; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.top = '-10px';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.animationDelay = (Math.random() * 1.5) + 's';
+      el.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+  }
+
+  function checkAndShowMilestone(streakDays, onDismiss) {
+    const moment = MILESTONE_MOMENTS[streakDays];
+    if (!moment) { onDismiss(); return; }
+
+    const key = 'milestone_celebrated_' + streakDays;
+    if (localStorage.getItem(key)) { onDismiss(); return; }
+
+    localStorage.setItem(key, 'true');
+
+    document.getElementById('milestone-heading-text').textContent = moment.heading;
+    document.getElementById('milestone-message-text').textContent = moment.message;
+
+    const overlay = document.getElementById('milestone-overlay');
+    overlay.classList.add('active');
+    launchConfetti();
+
+    document.getElementById('milestone-continue-btn')
+      .addEventListener('click', () => {
+        overlay.classList.remove('active');
+        onDismiss();
+      }, { once: true });
+  }
+
   initFromSupabase();
 
   // ── Progress dots ──────────────────────────────────────
@@ -1144,7 +1262,7 @@
     if (state.note || journalSober.value.trim()) {
       document.getElementById('summary-note-row').style.display = 'flex';
     }
-    showStep('step-4a', 3);
+    checkAndShowMilestone(state.currentStreak, () => showStep('step-4a', 3));
   }
 
   // ── Step 3b: Journal (slip) ────────────────────────────
