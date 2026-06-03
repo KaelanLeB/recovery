@@ -675,6 +675,28 @@
       cursor: pointer;
     }
 
+    /* ── Mood-sensitive SOS nudge ─────────────────────────── */
+    .sos-nudge {
+      display: none;
+      background: #fdf6f0;
+      border-left: 3px solid #e8a87c;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 16px 0 0 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .sos-nudge.visible {
+      display: block;
+    }
+    .sos-nudge a {
+      color: #2C5F5D;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
     /* ── Confetti pieces ──────────────────────────────────── */
     .confetti-piece {
       position: fixed;
@@ -782,6 +804,10 @@
           aria-label="Optional one-line note"
           tabindex="-1"
         ></textarea>
+      </div>
+
+      <div class="sos-nudge" id="sos-nudge" role="status" aria-live="polite">
+        Sounds like a hard day. The <a href="sos.html">1-minute reset</a> is there if you need it — or keep going.
       </div>
 
       <div class="spacer"></div>
@@ -1194,6 +1220,14 @@
       btn.setAttribute('aria-pressed', 'true');
       btn.setAttribute('aria-checked', 'true');
       state.mood = btn.dataset.mood;
+
+      const roughMoods = ['rough', 'tough'];
+      const nudge = document.getElementById('sos-nudge');
+      if (roughMoods.includes(state.mood)) {
+        nudge.classList.add('visible');
+      } else {
+        nudge.classList.remove('visible');
+      }
 
       // Activate Next button
       btnMoodNext.disabled = false;
