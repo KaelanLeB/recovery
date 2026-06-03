@@ -21,6 +21,8 @@ These rules apply to every session, every file, every change. They are not optio
 
 6. **Match existing style.** Do not reformat, rename, or restructure code that isn't being changed. Match the conventions already in the file — indentation, naming, comment style — even if you'd do it differently.
 
+7. **Update QA.md after every feature.** After any feature is confirmed applied and ready to commit, append a QA checklist block to QA.md for that feature. Format: feature name as an H2 heading, 4–6 specific testable assertions as checkboxes. Do this before stopping. If QA.md does not exist, create it.
+
 ---
 
 ## The Product
