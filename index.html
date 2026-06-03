@@ -100,11 +100,13 @@
       background: var(--sage-50);
       border-radius: var(--radius-pill);
       overflow: hidden;
+      display: flex;
+      align-items: center;
     }
     .progress-bar-fill {
-      height: 100%;
-      background: var(--sage-700);
-      border-radius: var(--radius-pill);
+      height: 3px;
+      background: #2C5F5D;
+      border-radius: 2px;
       transition: width 0.6s var(--ease);
     }
 
@@ -189,17 +191,20 @@
     .why-card {
       background: var(--warn-50);
       border: 1px solid #e8d5b0;
-      border-radius: var(--radius-lg);
+      border-radius: 12px;
+      box-shadow: none;
     }
     .why-card[hidden] { display: none; }
     .why-card .card-eyebrow {
+      font-family: 'Inter', sans-serif;
       font-size: 10px;
-      color: var(--ink-300);
+      letter-spacing: 0.12em;
+      color: #aaa;
     }
     .why-text {
       font-family: 'Fraunces', serif;
       font-style: italic;
-      font-size: 18px;
+      font-size: 15px;
       font-weight: 500;
       line-height: 1.6;
       color: var(--ink-900);
