@@ -444,7 +444,7 @@
     }
     .complete-streak {
       font-family: 'Fraunces', serif;
-      font-size: 96px;
+      font-size: 44px;
       font-weight: 600;
       letter-spacing: -0.03em;
       color: var(--sage-700);
@@ -1327,10 +1327,13 @@
 
       const roughMoods = ['rough', 'tough'];
       const nudge = document.getElementById('sos-nudge');
+      const sosFab = document.querySelector('.tab-sos');
       if (roughMoods.includes(state.mood)) {
         nudge.classList.add('visible');
+        sosFab.classList.add('sos-pulse');
       } else {
         nudge.classList.remove('visible');
+        sosFab.classList.remove('sos-pulse');
       }
 
       // Activate Next button

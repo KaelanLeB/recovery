@@ -234,3 +234,12 @@ body {
 .bottom-nav .tab-sos:focus-visible {
   box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px rgba(184,74,63,.5);
 }
+
+/* SOS FAB pulse — applied via JS on rough/tough mood selection */
+@keyframes pulse-fab {
+  0%, 100% { box-shadow: 0 8px 22px rgba(184,74,63,.35); }
+  50%       { box-shadow: 0 8px 22px rgba(184,74,63,.35), 0 0 0 8px rgba(184,74,63,.15); }
+}
+.sos-pulse {
+  animation: pulse-fab 2s ease-in-out infinite;
+}
