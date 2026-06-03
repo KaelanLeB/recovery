@@ -39,7 +39,6 @@
     .home-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 12px;
       flex-shrink: 0;
     }
@@ -56,85 +55,38 @@
       margin-top: 3px;
     }
 
-    /* ── SOS pill ──────────────────────────────────────── */
-    .sos-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--alert-600);
-      background: transparent;
-      border: 1.5px solid var(--alert-200);
-      border-radius: var(--radius-pill);
-      padding: 8px 14px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s, border-color 0.2s;
-      white-space: nowrap;
-      flex-shrink: 0;
+    /* ── Streak hero block ─────────────────────────────── */
+    .streak-hero-block {
+      text-align: center;
+      padding: 8px 0 4px;
     }
-    .sos-pill:hover { background: var(--alert-200); }
-    .sos-pill:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--alert-600);
-    }
-    .sos-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--alert-600);
-      flex-shrink: 0;
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: .5; transform: scale(.7); }
-    }
-
-    /* ── Card ──────────────────────────────────────────── */
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      padding: 24px;
-    }
-
-    /* ── Card eyebrow ──────────────────────────────────── */
-    .card-eyebrow {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--ink-500);
-      margin-bottom: 12px;
-    }
-
-    /* ── Streak hero card ──────────────────────────────── */
     .hero-num {
       font-family: 'Fraunces', serif;
-      font-size: 96px;
+      font-size: 108px;
       font-weight: 600;
       letter-spacing: -0.03em;
       line-height: 1;
       color: var(--sage-700);
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
     .hero-label {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--ink-500);
-      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--ink-300);
+      margin-bottom: 12px;
     }
     .hero-tone {
-      font-size: 15px;
-      line-height: 1.65;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 20px;
+      line-height: 1.5;
       color: var(--ink-700);
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     /* ── Progress bar ──────────────────────────────────── */
-    .progress-bar-wrap { margin-bottom: 16px; }
+    .progress-bar-wrap { margin-bottom: 0; }
     .progress-bar-meta {
       display: flex;
       justify-content: space-between;
@@ -156,19 +108,22 @@
       transition: width 0.6s var(--ease);
     }
 
-    /* ── Inline link ───────────────────────────────────── */
-    .hero-link {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--sage-700);
-      text-decoration: none;
-      display: inline-block;
+    /* ── Card ──────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 24px;
     }
-    .hero-link:hover { text-decoration: underline; text-underline-offset: 3px; }
-    .hero-link:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-      border-radius: 3px;
+
+    /* ── Card eyebrow ──────────────────────────────────── */
+    .card-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+      margin-bottom: 12px;
     }
 
     /* ── Check-in card ─────────────────────────────────── */
@@ -223,36 +178,24 @@
     }
 
     /* ── Check-in done state ───────────────────────────── */
-    .checkin-done-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-    }
-    .checkin-done-icon {
-      font-size: 36px;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-    .checkin-done-heading {
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--ink-900);
-      margin-bottom: 4px;
-    }
-    .checkin-done-sub {
+    .checkin-done-tomorrow {
+      font-family: 'Inter', sans-serif;
       font-size: 14px;
-      color: var(--ink-500);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: var(--ink-300);
+      text-align: center;
     }
 
     /* ── Personal why card ─────────────────────────────── */
     .why-card {
       background: var(--warn-50);
       border: 1px solid #e8d5b0;
+      border-radius: var(--radius-lg);
     }
     .why-card[hidden] { display: none; }
+    .why-card .card-eyebrow {
+      font-size: 10px;
+      color: var(--ink-300);
+    }
     .why-text {
       font-family: 'Fraunces', serif;
       font-style: italic;
@@ -278,14 +221,10 @@
       <p class="greeting" id="greeting">Good morning.</p>
       <p class="header-date" id="today-date"></p>
     </div>
-    <a class="sos-pill" href="sos.html" aria-label="Craving SOS — get support now">
-      <span class="sos-dot" aria-hidden="true"></span>SOS
-    </a>
   </header>
 
   <!-- ── Streak hero ──────────────────────────────────────── -->
-  <section class="card streak-hero" aria-labelledby="streak-hero-heading">
-    <p class="card-eyebrow" id="streak-hero-heading">Current streak</p>
+  <section class="streak-hero-block" aria-label="Current streak">
     <div class="hero-num" id="hero-num">—</div>
     <p class="hero-label" id="hero-label">days sober</p>
     <p class="hero-tone" id="hero-tone">You are building trust with yourself, one day at a time.</p>
@@ -298,7 +237,6 @@
         <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
       </div>
     </div>
-    <a class="hero-link" href="streak.html">View full streak →</a>
   </section>
 
   <!-- ── Today's check-in ─────────────────────────────────── -->
@@ -319,17 +257,8 @@
 
     <!-- Already checked in -->
     <div id="checkin-done" hidden>
-      <div class="checkin-done-row">
-        <span class="checkin-done-icon" aria-hidden="true">🌿</span>
-        <div>
-          <p class="checkin-done-heading">Checked in today</p>
-          <p class="checkin-done-sub">
-            <span id="checkin-mood-emoji" aria-hidden="true"></span>
-            <span id="checkin-sober-label"></span>
-          </p>
-        </div>
-      </div>
-      <a class="hero-link" href="streak.html" style="margin-top:16px; display:block;">View my streak →</a>
+      <p class="checkin-cta-heading">You showed up today.</p>
+      <p class="checkin-done-tomorrow">Come back tomorrow</p>
     </div>
   </section>
 
@@ -367,7 +296,7 @@
   document.getElementById('app-init').remove();
 
   const profileId = localStorage.getItem('profileId') || session.user.id;
-  const todayISO = new Date().toLocaleDateString('en-CA');
+  const todayISO = new Date().toISOString().split('T')[0];
 
   // ── Greeting + date ────────────────────────────────────────
   document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US', {
@@ -423,9 +352,6 @@
     }
   }
 
-  // ── Mood emoji map ─────────────────────────────────────────
-  const moodEmoji = { rough: '😔', tough: '🥺', okay: '😐', good: '🙂', great: '😌' };
-
   // ── Parallel data fetch ────────────────────────────────────
   const [profileResult, checkinResult] = await Promise.all([
     supabase.from('profiles')
@@ -459,14 +385,9 @@
   }
 
   // ── Render check-in status ─────────────────────────────────
+  const lastCheckin = localStorage.getItem('lastCheckin');
   const checkin = checkinResult.data;
-  if (checkin) {
-    const emoji = checkin.mood ? (moodEmoji[checkin.mood] || '') : '';
-    const moodEl = document.getElementById('checkin-mood-emoji');
-    moodEl.textContent = emoji;
-    moodEl.hidden = !emoji;
-    document.getElementById('checkin-sober-label').textContent =
-      checkin.sober ? 'Sober day confirmed ✓' : 'You showed up today';
+  if (lastCheckin === todayISO || checkin) {
     document.getElementById('checkin-done').hidden = false;
   } else {
     document.getElementById('checkin-todo').hidden = false;

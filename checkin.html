@@ -1151,6 +1151,7 @@
       return;
     }
 
+    localStorage.setItem('lastCheckin', new Date().toISOString().split('T')[0]);
     window.location.href = 'index.html';
   }
 
