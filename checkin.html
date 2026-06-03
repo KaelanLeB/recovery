@@ -607,6 +607,26 @@
       font-family: inherit;
       padding: 10px 12px;
     }
+
+    /* ── Personal why on completion screens ──────────────── */
+    .completion-why {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: #2C5F5D;
+      text-align: center;
+      margin: 16px 0;
+      padding: 0 24px;
+    }
+    .slip-why {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: #888;
+      text-align: center;
+      margin: 12px 0;
+      padding: 0 24px;
+    }
   </style>
 </head>
 <body>
@@ -757,6 +777,10 @@
         Logging a slip takes real courage. It means you're still here, still trying — and that's everything. Every day you've built doesn't disappear. Your journey is still yours.
       </div>
 
+      <p class="slip-why" id="slip-why-text" hidden>
+        You started this for a reason — <span id="slip-why-span"></span>
+      </p>
+
       <label class="journal-label" for="journal-slip">Want to add anything? (optional)</label>
       <textarea
         id="journal-slip"
@@ -798,6 +822,10 @@
           </div>
         </div>
       </div>
+
+      <p class="completion-why" id="completion-why-text" hidden>
+        You started this for a reason — <span id="completion-why-span"></span>
+      </p>
 
       <p class="save-error" id="save-error-sober" role="alert" aria-live="polite"></p>
       <button class="btn-primary always-ready" id="btn-done-sober" style="margin-top:28px;">Done</button>
@@ -985,7 +1013,7 @@
 
     const { data: profile, error } = await supabase
       .from('profiles')
-      .select('name, sobriety_start_date')
+      .select('name, sobriety_start_date, personal_why')
       .eq('id', profileId)
       .single();
     if (error || !profile) {
@@ -997,6 +1025,13 @@
         const start = new Date(profile.sobriety_start_date);
         const diffDays = Math.floor((Date.now() - start.getTime()) / 86400000);
         renderStreakState(Math.max(0, diffDays));
+      }
+      const why = profile?.personal_why || localStorage.getItem('personalWhy');
+      if (why) {
+        document.getElementById('completion-why-span').textContent = why;
+        document.getElementById('completion-why-text').hidden = false;
+        document.getElementById('slip-why-span').textContent = why;
+        document.getElementById('slip-why-text').hidden = false;
       }
     }
 
