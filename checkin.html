@@ -140,8 +140,15 @@
     }
 
     /* ── Step visibility ────────────────────────────────── */
-    .step { display: none; flex-direction: column; flex: 1; }
+    .step { display: none; flex-direction: column; flex: 1; transition: background-color 0.4s ease; }
     .step.active { display: flex; animation: fadeUp 0.3s var(--ease); }
+
+    /* ── Mood tint on step-1 ────────────────────────────── */
+    .step#step-1[data-mood="great"] { background-color: #fdf8f0; }
+    .step#step-1[data-mood="good"]  { background-color: #faf9f5; }
+    .step#step-1[data-mood="okay"]  { background-color: #f7f7f5; }
+    .step#step-1[data-mood="rough"] { background-color: #f5f7fa; }
+    .step#step-1[data-mood="tough"] { background-color: #f2f5f9; }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -337,6 +344,12 @@
       color: var(--ink-300);
       text-align: right;
       margin-bottom: 24px;
+    }
+
+    /* ── Slip step warm tint ───────────────────────────── */
+    #step-3b,
+    #step-4b {
+      background-color: #fdf8f4;
     }
 
     /* ── Compassion box ─────────────────────────────────── */
@@ -1324,6 +1337,7 @@
       btn.setAttribute('aria-pressed', 'true');
       btn.setAttribute('aria-checked', 'true');
       state.mood = btn.dataset.mood;
+      document.getElementById('step-1').setAttribute('data-mood', state.mood);
 
       const roughMoods = ['rough', 'tough'];
       const nudge = document.getElementById('sos-nudge');
@@ -1367,6 +1381,7 @@
 
   document.getElementById('btn-mood-skip').addEventListener('click', () => {
     state.mood = null;
+    document.getElementById('step-1').removeAttribute('data-mood');
     showStep('step-2', 1);
   });
 
