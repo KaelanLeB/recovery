@@ -123,20 +123,61 @@ This file is updated after every feature ships. Each block contains testable ass
 - ✅ Nudge never blocks or replaces the Next button — flow continues normally
   — checkin.html:809-818 — nudge div precedes `.spacer` (line 813); Next and skip buttons remain in DOM; JS only modifies nudge classes
 
+## P6 — Custom confirm modal for streak reset (slip path)
+
+- ✅ Confirm modal replaces native `confirm()` on the check-in slip-reset path
+  — checkin.html:1453-1454 — `btn-reset-streak` click handler now calls `showConfirm(async () => {...})` instead of an inline `async () =>` with no gate
+
+- ✅ Modal heading reads "Is this a fresh start?" with compassionate subtext
+  — checkin.html:1015-1019 — "Slipping doesn't erase your progress — it's part of the journey. Only reset if you're starting from today."
+
+- ✅ Modal is a proper dialog for assistive tech (role, aria-modal, labelled heading)
+  — checkin.html:1011-1012 — `role="dialog" aria-modal="true" aria-labelledby="confirm-heading-text"`
+
+- ✅ Confirm button runs the actual reset logic; Cancel closes with no side effects
+  — checkin.html:1296-1309 — `confirm-btn-confirm` click invokes `onConfirm()` (the reset flow); `confirm-btn-cancel` only removes `.active`
+
+- ✅ Verified live: clicking the slip-path reset button in the running app opens the modal in place of a native browser confirm popup (browser-tested 2026-08-11)
+
+- ✅ **FIXED — streak.html now matches.** The "Reset streak with compassion" button on the Streak page previously called the native `confirm()`; it now opens the same `.confirm-overlay` component ported from checkin.html, reusing the exact same CSS classes and `showConfirm()` pattern. Heading/subheading carry over the original confirm copy ("Reset your streak to Day 0?" / "This is a fresh start, not a failure.") split across the two-line layout.
+  — streak.html: modal CSS added after `.reset-error.visible`; markup added inside `.reset-card`'s section; `showConfirm()` + reset handler rewired at the bottom of the `<script>` block
+  — Verified live: Cancel closes the modal with the day count untouched; Confirm resets to Day 0, persists to Supabase (survives reload), and shows "Streak reset with care. Your clock starts now." with no console errors
+
+## Reskin — Mid-level display size + contextual SOS pulse (commit 470fbff)
+
+- ✅ Completion-screen streak number is mid-sized (44px, down from 96px)
+  — checkin.html:461 — `.complete-streak { font-size: 44px; }`; verified live, rendered "7" at 44px on the Day 7 completion screen
+
+- ✅ SOS bottom-nav tab pulses when mood is "rough" or "tough"
+  — checkin.html:1330-1335, theme.css:238-246 — `.sos-pulse` class toggled on `.tab-sos` alongside the existing SOS nudge; `pulse-fab` keyframe animates box-shadow; verified live via computed `animationName: "pulse-fab"` after selecting "Rough"
+
+- ✅ Pulse clears when mood is switched back to a neutral option
+  — checkin.html:1330-1335 — same handler removes `.sos-pulse` in the `else` branch, mirroring the nudge visibility logic
+
+- ⚠️ No `prefers-reduced-motion` guard on the new `pulse-fab` animation, or on the pre-existing `fadeUp` step transition — this is a pre-existing gap in the codebase (not introduced by this commit), flagged per accessibility principle in CLAUDE.md, not fixed
+
+## Reskin — Mood grid tint + slip path warm background (commit d0f7d1e, Reskin C + D)
+
+- ✅ Step 1 background tints per selected mood (5 distinct warm/cool tones)
+  — checkin.html:147-151 — `[data-mood="great|good|okay|rough|tough"]` each map to a distinct background-color; `data-mood` attribute is set/cleared correctly on mood select and on "Skip mood" (checkin.html:1340, 1384); verified live by disabling the CSS transition and re-reading computed style (rgb(245,247,250) for "rough" as expected) — the sandboxed preview tab doesn't composite frames, so the 0.4s transition itself couldn't be observed directly, only its resolved end state
+- ✅ Slip-path steps (step-3b, step-4b) get a warm background tint
+  — checkin.html:349-353 — `#step-3b, #step-4b { background-color: #fdf8f4; }`
+
 ---
 
 ## Audit Summary
 
 | Result | Count |
 |---|---|
-| ✅ PASS | 31 |
-| ⚠️ CANNOT VERIFY | 4 |
+| ✅ PASS | 40 |
+| ⚠️ CANNOT VERIFY / PARTIAL | 6 |
 | ❌ FAIL | 0 |
 
-**No FAILs found.**
+**No FAILs found.** (streak.html's native `confirm()` inconsistency, found during this audit, was fixed same-session — see P6 above.)
 
 **Items requiring live browser verification:**
 - P1 Fix: Day label and Next milestone label are readable on either side — index.html:237-240
 - P1 Fix: Why text not visually competing with streak hero — index.html:207-211
 - P2: Why text matches Supabase profiles.personal_why — checkin.html:1110-1125
 - P3: Overlay does not fire a second time (localStorage guard) — checkin.html:1166-1167
+- Reskin: `prefers-reduced-motion` handling absent app-wide (pre-existing gap)
