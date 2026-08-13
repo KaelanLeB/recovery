@@ -6,14 +6,10 @@
   <title>Craving SOS — Recovery App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,600&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="theme.css" />
   <style>
-    .shell {
-      padding: 20px 16px 0;
-      gap: 12px;
-    }
-
+    /* ── Header ─────────────────────────────────────────── */
     .sos-header {
       display: flex;
       align-items: center;
@@ -22,242 +18,197 @@
       flex-shrink: 0;
     }
     .sos-back {
-      color: var(--sage-700);
+      color: var(--muted);
       text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: 500;
+      font-size: 13px;
       padding: 8px 4px;
-      border-radius: var(--radius-sm);
+      border-radius: 8px;
       min-height: 44px;
       display: flex;
       align-items: center;
     }
-    .sos-back:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
+    .sos-back:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(63,143,116,.4); }
     .sos-kicker {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.16em;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--ink-500);
+      color: var(--muted);
     }
 
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      padding: 24px 20px;
-    }
-
-    /* ── Hero ───────────────────────────────────────────── */
-    .hero h1 {
-      font-family: 'Fraunces', serif;
-      font-size: 28px;
-      font-weight: 600;
-      letter-spacing: -0.015em;
+    /* ── Intro ──────────────────────────────────────────── */
+    .sos-intro h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
       line-height: 1.25;
-      margin-bottom: 10px;
-      color: var(--ink-900);
+      margin-bottom: 8px;
+      color: var(--ink);
     }
-    .hero p {
-      font-size: 16px;
-      line-height: 1.65;
-      color: var(--ink-700);
-      margin-bottom: 14px;
-    }
-    .instant {
-      background: var(--sage-50);
-      border-left: 4px solid var(--sage-700);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
+    .sos-intro p {
       font-size: 15px;
       line-height: 1.6;
-      color: var(--ink-700);
+      color: var(--muted);
     }
 
-    /* ── Breathing circle (pure CSS, no mascot) ─────────── */
-    .breathing {
-      margin-top: 16px;
-      text-align: center;
-      padding: 24px 14px 20px;
-      border-radius: var(--radius-md);
-      background: var(--surface-2);
+    /* ── Dark breathing hero ────────────────────────────── */
+    .breathing-hero {
+      position: relative;
+      border-radius: 30px;
+      height: 280px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(20,30,45,.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      background: radial-gradient(circle at 30% 20%, #2c4a6b, #182338 70%);
     }
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 70% 80%, rgba(63,143,116,.35), transparent 60%);
+      pointer-events: none;
+    }
+    .breathing-hero > *:not(.hero-glow) { position: relative; }
 
     .breath-circle {
-      width: 120px;
-      height: 120px;
+      width: 104px;
+      height: 104px;
       border-radius: 50%;
       margin: 0 auto 16px;
-      background: radial-gradient(circle at 40% 38%, #c8e6e2 0%, #a8d4cf 60%, #7fbfb9 100%);
-      box-shadow: 0 0 0 0 rgba(47,85,80,.15);
+      background: radial-gradient(circle at 40% 35%, rgba(255,255,255,.5), rgba(255,255,255,.05) 70%);
+      box-shadow: 0 0 60px rgba(255,255,255,.25);
       animation: breathe-idle 4s ease-in-out infinite;
     }
-    .breath-circle.inhale {
-      animation: breathe-in 4s ease-in-out forwards;
-    }
-    .breath-circle.exhale {
-      animation: breathe-out 6s ease-in-out forwards;
-    }
+    .breath-circle.inhale { animation: breathe-in 4s ease-in-out forwards; }
+    .breath-circle.exhale { animation: breathe-out 6s ease-in-out forwards; }
 
     @keyframes breathe-idle {
-      0%, 100% { transform: scale(0.9);  box-shadow: 0 0 0 0 rgba(47,85,80,.12); }
-      50%       { transform: scale(1.1); box-shadow: 0 0 0 16px rgba(47,85,80,.04); }
+      0%, 100% { transform: scale(0.92); }
+      50%       { transform: scale(1.06); }
     }
     @keyframes breathe-in {
-      from { transform: scale(0.9);  box-shadow: 0 0 0 0 rgba(47,85,80,.12); }
-      to   { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(47,85,80,.04); }
+      from { transform: scale(0.92); }
+      to   { transform: scale(1.08); }
     }
     @keyframes breathe-out {
-      from { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(47,85,80,.04); }
-      to   { transform: scale(0.9);  box-shadow: 0 0 0 0 rgba(47,85,80,.12); }
+      from { transform: scale(1.08); }
+      to   { transform: scale(0.92); }
     }
 
     .phase {
-      font-family: 'Fraunces', serif;
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: var(--sage-700);
-      line-height: 1;
-      margin-bottom: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 6px;
     }
     .phase-note {
-      font-size: 15px;
-      color: var(--ink-500);
-      line-height: 1.55;
-      min-height: 44px;
+      font-size: 12px;
+      color: rgba(255,255,255,.65);
+      text-align: center;
+      max-width: 230px;
+      min-height: 32px;
+      line-height: 1.5;
     }
 
-    /* ── Grounding ──────────────────────────────────────── */
-    .sos-section-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--ink-900);
-      margin: 0 0 6px;
-    }
-    .grounding {
-      margin-top: 16px;
-      border-radius: var(--radius-md);
-      border: 1.5px solid var(--sage-100);
-      padding: 16px;
-      background: var(--surface-2);
-    }
-    .grounding > p:first-of-type {
-      font-size: 15px;
-      color: var(--ink-700);
-      line-height: 1.6;
-      margin-bottom: 12px;
+    /* ── Grounding glass card ───────────────────────────── */
+    .grounding { border-radius: 22px; padding: 16px; }
+    .sos-eyebrow {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
     }
     .prompt {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--sage-700);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
       line-height: 1.45;
       margin-bottom: 12px;
     }
+    .btn-next-prompt {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-pill);
+      background: rgba(255,255,255,.4);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Inter', inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-next-prompt:hover { background: rgba(255,255,255,.6); }
+    .btn-next-prompt:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(63,143,116,.4); }
 
     /* ── Action buttons ─────────────────────────────────── */
     .actions {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-top: 16px;
+      margin-top: auto;
     }
-
-    /* Primary — sage fill */
     .btn-primary {
       border: none;
       border-radius: var(--radius-pill);
       width: 100%;
-      padding: 16px 12px;
-      font-size: 16px;
-      font-weight: 600;
+      padding: 15px;
+      font-size: 14px;
+      font-weight: 700;
       font-family: 'Inter', inherit;
       cursor: pointer;
       text-align: center;
-      background: var(--sage-700);
+      background: linear-gradient(135deg, var(--accent2), var(--accent2-dk));
       color: #fff;
-      box-shadow: 0 4px 16px rgba(47,85,80,.2);
-      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-      min-height: 52px;
-    }
-    .btn-primary:hover {
-      background: var(--sage-600);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(47,85,80,.28);
+      box-shadow: 0 8px 22px rgba(232,149,107,.35);
+      transition: transform 0.15s;
     }
     .btn-primary:active { transform: scale(0.97); }
-    .btn-primary:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
+    .btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(232,149,107,.5); }
 
-    /* Supportive — surface-2 fill, sage border */
     .btn-supportive {
-      border: 1.5px solid var(--sage-100);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-pill);
       width: 100%;
-      padding: 16px 12px;
-      font-size: 16px;
+      padding: 14px;
+      font-size: 13px;
       font-weight: 600;
       font-family: 'Inter', inherit;
       cursor: pointer;
       text-align: center;
-      background: var(--surface-2);
-      color: var(--ink-700);
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--ink);
       text-decoration: none;
-      display: block;
-      transition: background 0.2s, border-color 0.2s;
-      min-height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 48px;
     }
-    .btn-supportive:hover {
-      background: var(--sage-50);
-      border-color: var(--sage-700);
-      color: var(--sage-700);
-    }
-    .btn-supportive:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-
-    /* Next grounding prompt — reuse btn-soft style inline */
-    .btn-next-prompt {
-      border: 1.5px solid var(--sage-100);
-      border-radius: var(--radius-md);
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      font-family: 'Inter', inherit;
-      cursor: pointer;
-      background: var(--sage-50);
-      color: var(--sage-700);
-      min-height: 44px;
-      transition: background 0.2s;
-    }
-    .btn-next-prompt:hover { background: var(--sage-100); }
-    .btn-next-prompt:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
+    .btn-supportive:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(63,143,116,.4); }
 
     .footer-note {
       font-size: 13px;
       font-weight: 500;
-      color: var(--ink-500);
+      color: var(--muted);
       text-align: center;
       line-height: 1.5;
       padding: 4px 8px 8px;
     }
   </style>
 </head>
-<body>
+<body class="glass-ui">
   <a class="skip-link" href="#sos-main">Skip to main content</a>
 
   <main id="sos-main" class="shell" tabindex="-1">
@@ -266,44 +217,41 @@
       <span class="sos-kicker">SOS</span>
     </header>
 
-    <section class="card hero" aria-labelledby="sos-heading">
+    <div class="sos-intro">
       <h1 id="sos-heading">You are safe right now.</h1>
-      <p>
-        This feeling can pass. Stay with me for one minute and just follow along.
+      <p>This feeling can pass. Stay with me for one minute and just follow along.</p>
+    </div>
+
+    <!-- Dark breathing hero -->
+    <section
+      class="breathing-hero"
+      aria-live="polite"
+      aria-label="Guided breathing"
+      role="region"
+    >
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div id="breath-bubble" class="breath-circle" aria-hidden="true"></div>
+      <div id="phase" class="phase">Breathe in (4)</div>
+      <p id="phase-note" class="phase-note">
+        Slow inhale through your nose. No need to be perfect.
       </p>
-      <div class="instant">
-        Take your feet to the floor. Unclench your jaw. Drop your shoulders.
-      </div>
-
-      <section
-        class="breathing"
-        aria-live="polite"
-        aria-label="Guided breathing"
-        role="region"
-      >
-        <div id="breath-bubble" class="breath-circle" aria-hidden="true"></div>
-        <div id="phase" class="phase">Breathe in (4)</div>
-        <p id="phase-note" class="phase-note">
-          Slow inhale through your nose. No need to be perfect.
-        </p>
-      </section>
-
-      <section class="grounding" aria-labelledby="grounding-title">
-        <h2 id="grounding-title" class="sos-section-title">Grounding prompt</h2>
-        <p>When you're ready, do one prompt at a time. Keep it simple.</p>
-        <p class="prompt" id="grounding-prompt">Name 5 things you can see.</p>
-        <button id="next-prompt" class="btn-next-prompt" type="button">
-          Next prompt
-        </button>
-      </section>
-
-      <div class="actions">
-        <button class="btn-primary" id="repeat-minute" type="button">
-          Repeat 1-minute reset
-        </button>
-        <a class="btn-supportive" href="index.html">I'm ready to go home</a>
-      </div>
     </section>
+
+    <!-- Grounding -->
+    <section class="glass grounding" aria-labelledby="grounding-title">
+      <p class="sos-eyebrow" id="grounding-title">Grounding</p>
+      <p class="prompt" id="grounding-prompt">Name 5 things you can see.</p>
+      <button id="next-prompt" class="btn-next-prompt" type="button">
+        Next prompt
+      </button>
+    </section>
+
+    <div class="actions">
+      <button class="btn-primary" id="repeat-minute" type="button">
+        Repeat 1-minute reset
+      </button>
+      <a class="btn-supportive" href="index.html">I'm ready to go home</a>
+    </div>
 
     <p class="footer-note">
       You do not have to solve everything right now. Just get through this moment.
@@ -311,17 +259,11 @@
   </main>
 
   <nav class="bottom-nav" aria-label="Primary navigation">
-    <a class="tab" href="index.html">
-      <span class="tab-icon" aria-hidden="true">⌂</span>
-      <span class="tab-label">Home</span>
-    </a>
-    <a class="tab tab-sos active" href="sos.html" aria-current="page" aria-label="Craving SOS — get support now">
-      <span class="tab-label">SOS</span>
-    </a>
-    <a class="tab" href="streak.html">
-      <span class="tab-icon" aria-hidden="true">✦</span>
-      <span class="tab-label">Streak</span>
-    </a>
+    <div class="nav-pill">
+      <a class="nav-tab" href="index.html">Home</a>
+      <a class="nav-tab" href="streak.html">Streak</a>
+    </div>
+    <a class="nav-sos active" href="sos.html" aria-current="page" aria-label="Craving SOS — get support now">SOS</a>
   </nav>
 
   <script>

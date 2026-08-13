@@ -6,14 +6,14 @@
   <title>Streak Tracking — Recovery App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,600&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./theme.css" />
   <style>
     /* ── App-init overlay ──────────────────────────────── */
     #app-init {
       position: fixed;
       inset: 0;
-      background: #f6f2ea;
+      background: #eef1f4;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -22,497 +22,213 @@
     .app-init-spinner {
       width: 28px;
       height: 28px;
-      border: 3px solid rgba(47,85,80,.15);
-      border-top-color: #3b6a64;
+      border: 3px solid rgba(63,143,116,.2);
+      border-top-color: var(--accent);
       border-radius: 50%;
       animation: app-init-spin 0.7s linear infinite;
     }
     @keyframes app-init-spin { to { transform: rotate(360deg); } }
 
-    .shell {
-      padding: 24px 16px 0;
-      gap: 14px;
+    .visually-hidden {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
     }
 
-    .top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+    .top { display: flex; align-items: center; justify-content: space-between; }
     .top-title {
       font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.16em;
+      font-weight: 800;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--ink-500);
+      color: var(--muted);
     }
 
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      padding: 24px;
-    }
-
-    /* ── Hero streak card ──────────────────────────────── */
-    .hero-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.16em;
+    /* ── Glass panels ──────────────────────────────────── */
+    .panel { border-radius: 24px; padding: 16px 18px; }
+    .panel-eyebrow {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--ink-500);
-      margin-bottom: 8px;
-    }
-    .hero-day {
-      font-family: 'Fraunces', serif;
-      font-size: 108px;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-      line-height: 1;
-      color: var(--sage-700);
-      margin-bottom: 4px;
+      color: var(--muted);
+      margin-bottom: 10px;
     }
 
-    /* ── Live time counter ─────────────────────────────── */
-    .time-counter {
-      display: flex;
-      align-items: flex-start;
-      gap: 0;
-      margin-bottom: 16px;
-    }
-    .time-unit {
+    /* ── Hero streak card + ring ───────────────────────── */
+    .hero-card {
+      border-radius: 30px;
+      padding: 24px 20px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 52px;
     }
+    .ring-wrap { position: relative; width: 112px; height: 112px; margin-bottom: 10px; }
+    .ring-wrap svg { transform: rotate(-90deg); }
+    .ring-progress { transition: stroke-dashoffset 0.6s var(--ease); }
+    .ring-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .ring-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em;
+    }
+    .days-eyebrow {
+      font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+    }
+
+    /* ── Live time counter ─────────────────────────────── */
+    .time-counter { display: flex; align-items: flex-start; gap: 0; margin-bottom: 10px; }
+    .time-unit { display: flex; flex-direction: column; align-items: center; min-width: 48px; }
     .time-digits {
-      font-size: 26px;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.01em;
-      line-height: 1;
-      color: var(--sage-700);
-      opacity: 0.6;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums;
+      line-height: 1; color: var(--ink);
     }
     .time-label {
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--ink-300);
-      margin-top: 4px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); margin-top: 5px;
     }
     .time-sep {
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--sage-700);
-      opacity: 0.35;
-      padding: 0 2px;
-      line-height: 1;
-      margin-top: 1px;
+      font-size: 18px; font-weight: 600; color: var(--muted); opacity: 0.5;
+      padding: 0 2px; line-height: 1; margin-top: 1px;
     }
 
-    .streak-note {
-      font-size: 12px;
-      color: var(--ink-300);
-      font-style: italic;
-      margin-top: -10px;
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-
-    /* Progress bar to next milestone */
-    .progress-bar-wrap {
-      margin: 0 0 16px;
-    }
-    .progress-bar-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--ink-300);
-      margin-bottom: 6px;
-    }
-    .progress-bar-track {
-      height: 6px;
-      background: var(--sage-50);
-      border-radius: var(--radius-pill);
-      overflow: hidden;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: var(--sage-700);
-      border-radius: var(--radius-pill);
-      transition: width 0.6s var(--ease);
-    }
-
-    .hero-copy {
-      font-size: 16px;
-      line-height: 1.65;
-      color: var(--ink-700);
-    }
-
-    /* ── Section heading ───────────────────────────────── */
-    .section-title {
-      font-family: 'Fraunces', serif;
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: var(--ink-900);
-      margin-bottom: 14px;
-    }
+    .ring-meta { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+    .streak-note { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 8px; text-align: center; }
+    .hero-copy { font-size: 14px; line-height: 1.55; color: var(--ink); text-align: center; }
 
     /* ── Milestones ────────────────────────────────────── */
-    .milestones {
-      display: grid;
-      gap: 8px;
-      list-style: none;
-    }
+    .milestones { list-style: none; }
     .milestone {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      font-size: 15px;
-      color: var(--ink-500);
-      background: var(--surface-2);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid var(--hairline);
+      font-size: 13px; color: var(--muted);
     }
-    .milestone strong { color: var(--ink-900); font-weight: 600; }
-    .milestone.done {
-      background: var(--sage-50);
-      color: var(--sage-700);
-    }
-    .milestone.done strong { color: var(--sage-700); }
-    .milestone.done::after {
-      content: '✓';
-      font-weight: 700;
-      color: var(--sage-700);
-    }
+    .milestone:last-child { border-bottom: none; }
+    .milestone .ms-text { color: var(--muted); }
+    .milestone strong { font-weight: 600; }
+    .milestone::after { content: '—'; color: var(--muted); font-weight: 600; }
+    .milestone.done .ms-text { color: var(--ink); }
+    .milestone.done::after { content: '✓'; color: var(--accent); font-weight: 700; }
 
     /* ── Recovery Timeline ─────────────────────────────── */
-    .timeline-list {
-      display: grid;
-      gap: 8px;
-    }
-    .tl-item {
-      border-radius: var(--radius-md);
-      padding: 14px;
-      background: var(--surface-2);
-    }
-    .tl-item.future {
-      opacity: 0.55;
-    }
-    .tl-item.passed {
-      background: var(--sage-50);
-      opacity: 1;
-    }
-    .tl-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
-    }
-    .tl-left {}
-    .tl-label {
-      font-weight: 600;
-      font-size: 15px;
-      color: var(--ink-900);
-      line-height: 1.2;
-    }
-    .tl-item.passed .tl-label { color: var(--sage-700); }
-    .tl-date {
-      font-size: 12px;
-      color: var(--ink-400);
-      margin-top: 3px;
-    }
-    .tl-item.passed .tl-date { color: var(--sage-600); opacity: 0.8; }
-    .tl-badge {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--sage-700);
-      flex-shrink: 0;
-      margin-left: 8px;
-    }
+    .timeline-list { display: block; }
+    .tl-item { padding: 10px 0; border-bottom: 1px solid var(--hairline); }
+    .tl-item:last-child { border-bottom: none; }
+    .tl-item-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .tl-label { font-weight: 600; font-size: 13px; color: var(--muted); line-height: 1.2; }
+    .tl-item.passed .tl-label { color: var(--ink); }
+    .tl-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .tl-badge { font-size: 14px; font-weight: 700; color: var(--accent); flex-shrink: 0; margin-left: 8px; }
     .tl-badge.upcoming {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--ink-300);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-top: 3px;
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px;
     }
-    .tl-benefits {
-      list-style: none;
-      display: grid;
-      gap: 4px;
-      margin: 0;
-      padding: 0;
-    }
-    .tl-benefits li {
-      font-size: 13px;
-      color: var(--ink-500);
-      padding-left: 14px;
-      position: relative;
-      line-height: 1.45;
-    }
-    .tl-benefits li::before {
-      content: '·';
-      position: absolute;
-      left: 0;
-      color: var(--ink-300);
-      font-size: 16px;
-      line-height: 1;
-      top: 1px;
-    }
-    .tl-item.passed .tl-benefits li { color: var(--sage-700); opacity: 0.85; }
-    .tl-item.passed .tl-benefits li::before { color: var(--sage-500); }
-
+    .tl-benefits { list-style: none; margin: 4px 0 0; padding: 0; }
+    .tl-benefits li { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.45; }
     .timeline-placeholder {
-      font-size: 14px;
-      color: var(--ink-400);
-      text-align: center;
-      padding: 16px 0 8px;
-      font-style: italic;
+      font-size: 13px; color: var(--muted); text-align: center;
+      padding: 12px 0 4px; font-style: italic;
     }
 
     /* ── Stats grid ────────────────────────────────────── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .stat-card {
-      padding: 20px 16px;
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat-card { border-radius: 20px; padding: 16px 14px; text-align: center; }
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 800; color: var(--ink);
+      line-height: 1.1; word-break: break-word;
     }
     .stat-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--ink-500);
-      margin-bottom: 8px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); margin-top: 4px;
     }
-    .stat-value {
-      font-family: 'Fraunces', serif;
-      font-size: 34px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      line-height: 1;
-      color: var(--sage-700);
-      margin-bottom: 4px;
-      word-break: break-all;
-    }
-    .stat-sub {
-      font-size: 13px;
-      color: var(--ink-500);
-      line-height: 1.4;
-    }
+    .stat-sub { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
     .set-cost-btn {
-      display: inline-block;
-      margin-top: 10px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ink-500);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-family: inherit;
-      padding: 0;
+      display: inline-block; margin-top: 8px;
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      text-decoration: underline; text-underline-offset: 3px;
+      cursor: pointer; background: none; border: none; font-family: inherit; padding: 0;
     }
-    .set-cost-btn:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-      border-radius: 3px;
-    }
-    .cost-input-wrap {
-      margin-top: 10px;
-      display: none;
-    }
+    .set-cost-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(63,143,116,.4); border-radius: 3px; }
+    .cost-input-wrap { margin-top: 10px; display: none; }
     .cost-input-wrap.open { display: block; }
-    .cost-input-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .cost-prefix {
-      font-size: 16px;
-      color: var(--ink-500);
-      font-weight: 500;
-    }
+    .cost-input-row { display: flex; gap: 6px; align-items: center; justify-content: center; }
+    .cost-prefix { font-size: 15px; color: var(--muted); font-weight: 600; }
     .cost-input {
-      width: 72px;
-      border: 1.5px solid var(--sage-100);
-      border-radius: var(--radius-sm);
-      padding: 8px 10px;
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--ink-900);
-      background: var(--surface);
-      min-height: 40px;
+      width: 72px; border: 1px solid var(--glass-border); border-radius: 12px;
+      padding: 8px 10px; font-size: 14px; font-family: inherit; color: var(--ink);
+      background: rgba(255,255,255,.5); min-height: 40px;
     }
-    .cost-input:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
+    .cost-input:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(63,143,116,.4); }
     .btn-cost-save {
-      border: 1px solid var(--sage-100);
-      border-radius: var(--radius-sm);
-      background: var(--sage-50);
-      color: var(--sage-700);
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      padding: 8px 12px;
-      cursor: pointer;
-      min-height: 40px;
+      border: none; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dk));
+      color: #fff; font-size: 13px; font-weight: 700; font-family: inherit;
+      padding: 9px 14px; cursor: pointer; min-height: 40px;
     }
-    .btn-cost-save:hover { background: var(--sage-100); }
-    .cost-note {
-      font-size: 12px;
-      color: var(--ink-400);
-      margin-top: 6px;
-    }
+    .cost-note { font-size: 11px; color: var(--muted); margin-top: 6px; }
 
     /* ── Start date (collapsed) ────────────────────────── */
+    .section-title { font-size: 15px; font-weight: 700; color: var(--ink); }
     .edit-date-link {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ink-500);
-      cursor: pointer;
-      background: none;
-      border: none;
-      padding: 0;
-      font-family: inherit;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      cursor: pointer; background: none; border: none; padding: 0;
+      font-family: inherit; text-decoration: underline; text-underline-offset: 3px;
     }
-    .edit-date-link:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-      border-radius: 3px;
-    }
+    .edit-date-link:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(63,143,116,.4); border-radius: 3px; }
     .date-panel {
-      overflow: hidden;
-      max-height: 0;
-      opacity: 0;
+      overflow: hidden; max-height: 0; opacity: 0;
       transition: max-height 0.35s var(--ease), opacity 0.3s var(--ease);
     }
-    .date-panel.open {
-      max-height: 200px;
-      opacity: 1;
-    }
+    .date-panel.open { max-height: 220px; opacity: 1; }
     .date-panel-inner { padding-top: 16px; }
     .date-wrap label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink-700);
-      margin-bottom: 8px;
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--ink); margin-bottom: 8px;
     }
-    .date-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
+    .date-row { display: flex; gap: 8px; align-items: center; }
     input[type="date"] {
-      flex: 1;
-      border: 1.5px solid var(--sage-100);
-      border-radius: var(--radius-sm);
-      padding: 11px 12px;
-      font-size: 14px;
-      color: var(--ink-900);
-      font-family: inherit;
-      background: var(--surface);
-      min-height: 44px;
+      flex: 1; border: 1px solid var(--glass-border); border-radius: 12px;
+      padding: 11px 12px; font-size: 14px; color: var(--ink);
+      font-family: inherit; background: rgba(255,255,255,.5); min-height: 44px;
     }
-    input[type="date"]:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
+    input[type="date"]:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(63,143,116,.4); }
     .btn-soft {
-      border: 1px solid var(--sage-100);
-      border-radius: var(--radius-sm);
-      background: var(--sage-50);
-      color: var(--sage-700);
-      font-size: 14px;
-      font-weight: 600;
-      font-family: inherit;
-      padding: 11px 14px;
-      cursor: pointer;
-      min-height: 44px;
+      border: none; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dk));
+      color: #fff; font-size: 14px; font-weight: 700; font-family: inherit;
+      padding: 11px 16px; cursor: pointer; min-height: 44px;
     }
-    .btn-soft:hover { background: var(--sage-100); }
-    .btn-soft:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-    .date-note {
-      margin-top: 8px;
-      font-size: 13px;
-      color: var(--ink-500);
-      line-height: 1.55;
-    }
+    .date-note { margin-top: 8px; font-size: 13px; color: var(--muted); line-height: 1.55; }
 
     /* ── Reset card ────────────────────────────────────── */
-    .reset-card {
-      border: 1.5px solid var(--alert-200);
-      background: #fff9f8;
-    }
-    .reset-card p {
-      font-size: 15px;
-      color: var(--ink-700);
-      line-height: 1.6;
-      margin-bottom: 14px;
-    }
+    .reset-card p { font-size: 14px; color: var(--ink); line-height: 1.6; margin-bottom: 14px; }
     .btn-reset {
-      width: 100%;
-      border: 1.5px solid #e0aea8;
-      border-radius: var(--radius-md);
-      background: var(--alert-200);
-      color: var(--alert-600);
-      font-size: 15px;
-      font-weight: 600;
-      font-family: inherit;
-      padding: 13px;
-      cursor: pointer;
-      min-height: 44px;
+      width: 100%; border: 1px solid rgba(207,124,82,.5); border-radius: 999px;
+      background: rgba(232,149,107,.16); color: var(--accent2-dk);
+      font-size: 14px; font-weight: 700; font-family: inherit;
+      padding: 13px; cursor: pointer; min-height: 44px;
     }
-    .btn-reset:hover { background: #f0c8c2; }
-    .btn-reset:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--alert-600);
-    }
-
-    /* ── Reset error ───────────────────────────────────── */
+    .btn-reset:hover { background: rgba(232,149,107,.26); }
+    .btn-reset:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(232,149,107,.5); }
     .reset-error {
-      display: none;
-      margin-top: 10px;
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      background: #fff3f3;
-      border: 1.5px solid #f5c6c6;
-      font-size: 14px;
-      color: #8b2020;
-      line-height: 1.5;
-      text-align: center;
+      display: none; margin-top: 10px; padding: 10px 14px; border-radius: 12px;
+      background: rgba(207,124,82,.12); border: 1px solid rgba(207,124,82,.35);
+      font-size: 13px; color: var(--accent2-dk); line-height: 1.5; text-align: center;
     }
     .reset-error.visible { display: block; }
 
     /* ── Loading state ─────────────────────────────────── */
-    .loading-pulse {
-      animation: pulse 1.4s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.35; }
-    }
+    .loading-pulse { animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
   </style>
 </head>
-<body>
+<body class="glass-ui">
 <div id="app-init" aria-hidden="true"><div class="app-init-spinner"></div></div>
   <a class="skip-link" href="#streak-main">Skip to content</a>
   <main class="shell" id="streak-main" tabindex="-1">
@@ -521,9 +237,16 @@
     </div>
 
     <!-- Hero -->
-    <section class="card" aria-labelledby="streak-heading">
-      <p class="hero-label" id="streak-heading">Current streak</p>
-      <div class="hero-day"><span id="current-day" class="loading-pulse">—</span></div>
+    <section class="glass hero-card" aria-labelledby="streak-heading">
+      <p class="visually-hidden" id="streak-heading">Current streak</p>
+      <div class="ring-wrap" aria-hidden="true">
+        <svg width="112" height="112" viewBox="0 0 112 112">
+          <circle cx="56" cy="56" r="47" fill="none" stroke="rgba(32,42,55,.09)" stroke-width="9"></circle>
+          <circle id="progress-ring" class="ring-progress" cx="56" cy="56" r="47" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="295" stroke-dashoffset="295"></circle>
+        </svg>
+        <div class="ring-center"><span id="current-day" class="ring-num loading-pulse">—</span></div>
+      </div>
+      <p class="days-eyebrow">days sober</p>
 
       <!-- Live time counter -->
       <div class="time-counter" aria-live="off" aria-label="Time elapsed today">
@@ -543,19 +266,13 @@
         </div>
       </div>
 
+      <p class="ring-meta" aria-hidden="true">
+        <span id="progress-from-label">—</span> · <span id="progress-to-label">—</span>
+      </p>
+
       <p class="streak-note" id="streak-note" hidden>
         Complete onboarding to track your real streak
       </p>
-
-      <div class="progress-bar-wrap" aria-hidden="true">
-        <div class="progress-bar-meta">
-          <span id="progress-from-label">—</span>
-          <span id="progress-to-label">—</span>
-        </div>
-        <div class="progress-bar-track">
-          <div class="progress-bar-fill" id="progress-bar-fill" style="width:0%"></div>
-        </div>
-      </div>
 
       <p class="hero-copy" id="hero-copy">
         You are building trust with yourself one day at a time. This progress matters.
@@ -563,20 +280,20 @@
     </section>
 
     <!-- Milestones -->
-    <section class="card" aria-labelledby="milestones-heading">
-      <h2 class="section-title" id="milestones-heading">Milestones</h2>
+    <section class="glass panel" aria-labelledby="milestones-heading">
+      <p class="panel-eyebrow" id="milestones-heading">Milestones</p>
       <ul class="milestones" id="milestone-list">
-        <li class="milestone"><strong>Day 1</strong>   <span>First brave step</span></li>
-        <li class="milestone"><strong>Day 7</strong>   <span>One full week</span></li>
-        <li class="milestone"><strong>Day 30</strong>  <span>One month strong</span></li>
-        <li class="milestone"><strong>Day 90</strong>  <span>Deep momentum</span></li>
-        <li class="milestone"><strong>Day 365</strong> <span>One full year</span></li>
+        <li class="milestone"><span class="ms-text"><strong>Day 1</strong> — First brave step</span></li>
+        <li class="milestone"><span class="ms-text"><strong>Day 7</strong> — One full week</span></li>
+        <li class="milestone"><span class="ms-text"><strong>Day 30</strong> — One month strong</span></li>
+        <li class="milestone"><span class="ms-text"><strong>Day 90</strong> — Deep momentum</span></li>
+        <li class="milestone"><span class="ms-text"><strong>Day 365</strong> — One full year</span></li>
       </ul>
     </section>
 
     <!-- Recovery Timeline -->
-    <section class="card" aria-labelledby="timeline-heading" id="timeline-section">
-      <h2 class="section-title" id="timeline-heading">Recovery Timeline</h2>
+    <section class="glass panel" aria-labelledby="timeline-heading" id="timeline-section">
+      <p class="panel-eyebrow" id="timeline-heading">Recovery timeline</p>
       <div class="timeline-list" id="timeline-list">
         <p class="timeline-placeholder">Loading your recovery timeline…</p>
       </div>
@@ -585,9 +302,9 @@
     <!-- Stats -->
     <div class="stats-grid" id="stats-section">
       <!-- Money Saved -->
-      <div class="card stat-card" id="money-card">
-        <p class="stat-label">Money Saved</p>
+      <div class="glass stat-card" id="money-card">
         <p class="stat-value" id="money-value">—</p>
+        <p class="stat-label">Money saved</p>
         <p class="stat-sub" id="money-sub"></p>
         <button class="set-cost-btn" id="set-cost-btn" type="button" hidden>
           Set daily cost →
@@ -603,17 +320,16 @@
       </div>
 
       <!-- Time Reclaimed -->
-      <div class="card stat-card">
-        <p class="stat-label">Time Regained</p>
+      <div class="glass stat-card">
         <p class="stat-value" id="time-reclaimed-value">—</p>
-        <p class="stat-sub">hours</p>
+        <p class="stat-label">Hours regained</p>
       </div>
     </div>
 
     <!-- Start date (collapsed by default) -->
-    <section class="card date-wrap" aria-labelledby="date-section-heading">
+    <section class="glass panel date-wrap" aria-labelledby="date-section-heading">
       <div style="display:flex; align-items:center; justify-content:space-between;">
-        <h2 class="section-title" id="date-section-heading" style="margin-bottom:0">Sobriety start date</h2>
+        <h2 class="section-title" id="date-section-heading">Sobriety start date</h2>
         <button class="edit-date-link" id="edit-date-btn" aria-expanded="false" aria-controls="date-panel">Edit start date</button>
       </div>
       <div class="date-panel" id="date-panel" aria-hidden="true">
@@ -631,8 +347,8 @@
     </section>
 
     <!-- Reset -->
-    <section class="card reset-card" aria-labelledby="reset-heading">
-      <h2 class="section-title" id="reset-heading">Need to reset your streak?</h2>
+    <section class="glass panel reset-card" aria-labelledby="reset-heading">
+      <h2 class="section-title" id="reset-heading" style="margin-bottom:10px">Need to reset your streak?</h2>
       <p>
         If you had a slip, you are not starting over as a person. You are starting your next day with honesty.
       </p>
@@ -642,17 +358,11 @@
   </main>
 
   <nav class="bottom-nav" aria-label="Primary navigation">
-    <a class="tab" href="./index.html">
-      <span class="tab-icon" aria-hidden="true">⌂</span>
-      <span class="tab-label">Home</span>
-    </a>
-    <a class="tab tab-sos" href="./sos.html" aria-label="Craving SOS — get support now">
-      <span class="tab-label">SOS</span>
-    </a>
-    <a class="tab active" href="./streak.html" aria-current="page">
-      <span class="tab-icon" aria-hidden="true">✦</span>
-      <span class="tab-label">Streak</span>
-    </a>
+    <div class="nav-pill">
+      <a class="nav-tab" href="./index.html">Home</a>
+      <a class="nav-tab active" href="./streak.html" aria-current="page">Streak</a>
+    </div>
+    <a class="nav-sos" href="./sos.html" aria-label="Craving SOS — get support now">SOS</a>
   </nav>
 
   <script type="module">
@@ -674,7 +384,7 @@
     const streakNote        = document.getElementById('streak-note');
     const milestoneItems    = document.querySelectorAll('#milestone-list .milestone');
     const heroCopyEl        = document.getElementById('hero-copy');
-    const progressFill      = document.getElementById('progress-bar-fill');
+    const progressRing      = document.getElementById('progress-ring');
     const progressFrom      = document.getElementById('progress-from-label');
     const progressTo        = document.getElementById('progress-to-label');
     const selectedDateInput = document.getElementById('start-date');
@@ -690,6 +400,7 @@
 
     // ── Milestone config ─────────────────────────────────────
     const MILESTONES = [1, 7, 30, 90, 365];
+    const STREAK_RING_C = 295; // 2πr, r=47 (matches stroke-dasharray)
     const HERO_TONE = {
       1:   'Day 1 counts. A gentle start is still a powerful start.',
       7:   'One week in. Keep taking this one day at a time.',
@@ -856,16 +567,10 @@
 
       const next = getNextMilestone(day);
       const prev = getPrevMilestone(day);
-      if (next) {
-        const pct = Math.round(((day - prev) / (next - prev)) * 100);
-        progressFill.style.width = pct + '%';
-        progressFrom.textContent = `Day ${day}`;
-        progressTo.textContent   = `Next: Day ${next}`;
-      } else {
-        progressFill.style.width = '100%';
-        progressFrom.textContent = `Day ${day}`;
-        progressTo.textContent   = '🎉 All milestones reached';
-      }
+      const pct = next ? ((day - prev) / (next - prev)) * 100 : 100;
+      progressRing.style.strokeDashoffset = STREAK_RING_C * (1 - pct / 100);
+      progressFrom.textContent = `Day ${day}`;
+      progressTo.textContent   = next ? `Next: Day ${next}` : 'All milestones reached';
     }
 
     // ── Render recovery timeline ─────────────────────────────

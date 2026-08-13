@@ -123,14 +123,49 @@ This file is updated after every feature ships. Each block contains testable ass
 - ✅ Nudge never blocks or replaces the Next button — flow continues normally
   — checkin.html:809-818 — nudge div precedes `.spacer` (line 813); Next and skip buttons remain in DOM; JS only modifies nudge classes
 
+## Glass Redesign — "Glass" visual reskin of Home, Streak, Check-in, SOS
+
+Presentation-layer redesign (frosted glass cards on a pastel mesh gradient). All existing JS logic, Supabase calls, auth guards, and element IDs preserved; only HTML structure and CSS changed, plus minimal ring/pulse bindings noted below. Verified live in browser 2026-08-12 against a real Supabase session (Sam, 46 days).
+
+- ✅ Glass tokens are scoped to `body.glass-ui`, leaving onboarding.html (out of scope) on the original warm theme
+  — theme.css — `body.glass-ui { --ink/--muted/--glass/--accent/--accent2 + mesh bg }`; `:root` untouched; verified onboarding uses 31 legacy token refs and has no `.glass-ui` class
+
+- ✅ Floating glass bottom nav (pill + separate coral SOS circle) replaces the opaque bar on all 4 pages
+  — theme.css `.glass-ui .bottom-nav/.nav-pill/.nav-tab/.nav-sos`; verified nav links resolve Home→index, Streak→streak, SOS→sos on every page
+
+- ✅ Home: SVG progress ring replaces the progress bar; `progress-ring` stroke-dashoffset bound to the existing milestone percentage
+  — index.html — RING_CIRCUMFERENCE=352; verified day 46 → offset 258.13 (pct between milestones 30→90); Space Grotesk ring number; status chips (46 / "Steady momentum") + avatar initial "S" populate from profile
+
+- ✅ Streak: live SVG ring bound to `strokeDashoffset` (circumference 295, r=47) replaces the CSS progress bar; live ticker, milestones, timeline, stats all preserved
+  — streak.html — verified day 46 → offset 216.33; 3/5 milestones done; 8/10 timeline items passed; hours regained 1,127; cost-input toggle works; live ticker running (hh updating)
+
+- ✅ Check-in: 4-step state machine, milestone overlay, confirm modal, SOS nudge all preserved; mood icon-grid re-skinned as glass pill chips
+  — checkin.html — verified step-1→2→3a→4a transitions; selected mood = accent gradient fill + white label + ✓; completion streak in Space Grotesk; milestone badge + personal-why line render
+
+- ✅ Check-in SOS pulse retargeted from removed `.tab-sos` to the glass `.nav-sos`, with a coral pulse keyframe
+  — checkin.html:1344 `.tab-sos`→`.nav-sos`; theme.css `pulse-fab-coral` + `.glass-ui .nav-sos.sos-pulse`; verified rough-mood selection sets `animationName: pulse-fab-coral` and reveals the nudge
+
+- ✅ SOS: dark navy breathing hero with white-glow orb; breathing loop + grounding rotation preserved unchanged (no JS edits)
+  — sos.html — verified hero 280px navy radial + emerald glow; orb `.inhale`/`.exhale` phase-synced (4s/4s/6s); live loop cycling ("Breathe out (5)"); Space Grotesk white phase text; coral primary button; SOS nav active glow ring
+
+- ✅ Accessibility: `prefers-reduced-motion` guard added for all decorative animation on glass pages (closes the pre-existing gap flagged in the earlier reskin audit)
+  — theme.css `@media (prefers-reduced-motion: reduce) .glass-ui *`
+
+- ✅ No horizontal scroll on any page at 375px mobile width; no console errors on any page
+  — verified via `document.documentElement.scrollWidth <= innerWidth` and error-only console read on all 4 pages
+
+- ⚠️ Screenshots unavailable — the sandbox browser pane does not composite frames, so verification was done via computed styles, accessibility tree, and page text rather than visual capture. A human should eyeball the glass blur/mesh rendering on a real device.
+
+- ⚠️ **Merge note (not a defect):** this branch (`redesign/glass-ui`, off `main`) predates PR #6, so streak.html here still uses the native `confirm()` for reset (checkin.html keeps its P6 custom modal, which was already on main). If PR #6 lands first, reconcile so the Streak reset uses the glass confirm modal too.
+
 ---
 
 ## Audit Summary
 
 | Result | Count |
 |---|---|
-| ✅ PASS | 31 |
-| ⚠️ CANNOT VERIFY | 4 |
+| ✅ PASS | 40 |
+| ⚠️ CANNOT VERIFY | 6 |
 | ❌ FAIL | 0 |
 
 **No FAILs found.**
@@ -140,3 +175,5 @@ This file is updated after every feature ships. Each block contains testable ass
 - P1 Fix: Why text not visually competing with streak hero — index.html:207-211
 - P2: Why text matches Supabase profiles.personal_why — checkin.html:1110-1125
 - P3: Overlay does not fire a second time (localStorage guard) — checkin.html:1166-1167
+- Glass Redesign: visual glass blur / mesh gradient rendering on a real device (sandbox pane could not screenshot)
+- Glass Redesign: reconcile streak.html reset with PR #6's glass confirm modal on merge
